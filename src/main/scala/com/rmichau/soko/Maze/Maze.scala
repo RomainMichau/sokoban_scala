@@ -3,7 +3,7 @@ package com.rmichau.soko.Maze
 import com.rmichau.soko.Maze.SquareType.SquareType
 
 import scala.collection.immutable.HashMap
-import scala.io.Source
+import scala.io.{BufferedSource, Source}
 
 object SquareType extends Enumeration {
   type  SquareType = Value
@@ -18,8 +18,10 @@ object SquareType extends Enumeration {
 
 
 class Maze {
-
-  var currentGameState = this.loadLevelFromFile("/home/rmichau/other_projects/sc_sokoban/ressources/levels/medium/medium_2.dat")
+  // if you use intelliJ you need to configure the resource file i the project struct
+  // see: https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000168244/comments/115000201030
+  val fileStream = getClass.getResourceAsStream("/levels/medium/medium_2.dat")
+  var currentGameState = loadLevelFromFile(Source.fromInputStream(fileStream))
   val (lig, col) = getNbLigNbCol()
 
   def field = currentGameState.field
@@ -33,10 +35,8 @@ class Maze {
 
 
   //def changeGameState
-  private def loadLevelFromFile(levelPath: String): GameState = {
-    val levelFile = Source.fromFile(levelPath)
-    val fileLines = levelFile.getLines().toArray
-    levelFile.close()
+  private def loadLevelFromFile(level: BufferedSource): GameState = {
+    val fileLines = level.getLines().toArray
     val nbCol = fileLines.map(_.length).max
     var pos = Coord(0, 0)
     val field: Array[Array[SquareType]] = fileLines.zipWithIndex.map { case (li, idxli) =>
