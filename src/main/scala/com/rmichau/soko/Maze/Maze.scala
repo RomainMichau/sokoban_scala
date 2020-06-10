@@ -1,9 +1,12 @@
 package com.rmichau.soko.Maze
 
+import com.rmichau.soko.Maze.SquareType.SquareType
+
 import scala.collection.immutable.HashMap
 import scala.io.Source
 
 object SquareType extends Enumeration {
+  type  SquareType = Value
   val Ground = Value(0)
   val Wall = Value(1)
   val Box = Value(2)
@@ -15,6 +18,7 @@ object SquareType extends Enumeration {
 
 
 class Maze {
+
   var currentGameState = this.loadLevelFromFile("/home/rmichau/other_projects/sc_sokoban/ressources/levels/medium/medium_2.dat")
   val (lig, col) = getNbLigNbCol()
 
@@ -35,7 +39,7 @@ class Maze {
     levelFile.close()
     val nbCol = fileLines.map(_.length).max
     var pos = Coord(0, 0)
-    val field: HashMap[Coord, Square] = fileLines.zipWithIndex.map { case (li, idxli) =>
+    val field: Array[Array[SquareType]] = fileLines.zipWithIndex.map { case (li, idxli) =>
       li.toCharArray.zipWithIndex.map { case (sq, idxCol) =>
         if (sq.asDigit == 5) pos = Coord(idxli, idxCol)
         SquareType(sq.asDigit)
@@ -68,7 +72,6 @@ class Maze {
       }
     }
 
-
     // Print col index
     print("   ")
     (0 until this.col).foreach { nb =>
@@ -89,5 +92,4 @@ class Maze {
 
 }
 
-case class GameState(field: HashMap[Coord, Square], playerPos: Coord, posBoxes: Set[Coord])
-case class Square(coord: Coord, squareType:SquareType.Value)
+case class GameState(field: Array[Array[SquareType]], playerPos: Coord, posBoxes: Set[Coord])
