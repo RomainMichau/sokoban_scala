@@ -1,8 +1,10 @@
 package com.rmichau.soko.Maze
 
+import com.rmichau.soko.Maze.Maze.Field
 import com.rmichau.soko.Maze.SquareType.SquareType
 
 import scala.collection.immutable.HashMap
+import scala.collection.mutable
 import scala.io.{BufferedSource, Source}
 
 object SquareType extends Enumeration {
@@ -16,13 +18,14 @@ object SquareType extends Enumeration {
   val DeadSquare = Value(9)
 }
 
-
+object Maze{
+  type Field = HashMap[Coord, SquareType]
+}
 class Maze {
-  // if you use intelliJ you need to configure the resource file i the project struct
+  // if you use intelliJ you need to configure the resource file in the project struct
   // see: https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000168244/comments/115000201030
   val fileStream = getClass.getResourceAsStream("/levels/medium/medium_2.dat")
-  var currentGameState = loadLevelFromFile(Source.fromInputStream(fileStream))
-  val (lig, col) = getNbLigNbCol()
+  var(currentGameState, lig, col) = loadLevelFromFile(Source.fromInputStream(fileStream))
 
   def field = currentGameState.field
 
@@ -34,29 +37,39 @@ class Maze {
   drawField()
 
 
-  //def changeGameState
-  private def loadLevelFromFile(level: BufferedSource): GameState = {
+  def changeGameState(gameState: GameState) = {
+    this.currentGameState = gameState
+  }
+
+  /*def isSquareWalkable(coord: Coord): Boolean ={
+  }*/
+
+  private def loadLevelFromFile(level: BufferedSource): (GameState, Int, Int) = {
     val fileLines = level.getLines().toArray
     val nbCol = fileLines.map(_.length).max
+    val lig = fileLines.length
     var pos = Coord(0, 0)
-    val field: Array[Array[SquareType]] = fileLines.zipWithIndex.map { case (li, idxli) =>
+    val fieldArray: Array[Array[SquareType]] = fileLines.zipWithIndex.map { case (li, idxli) =>
       li.toCharArray.zipWithIndex.map { case (sq, idxCol) =>
         if (sq.asDigit == 5) pos = Coord(idxli, idxCol)
         SquareType(sq.asDigit)
       } ++ Array.fill(nbCol - li.length)(SquareType.Wall)
     }
-    val boxes = (for (li <- field.indices; col <- field(li).indices if field(li)(col) == SquareType.Box)
-      yield Coord(li, col)).toSet
-    GameState(field, pos, boxes)
-  }
 
-  private def getNbLigNbCol(): (Int, Int) = {
-    (field.length, field.map(_.length).max)
+    var fieldMap: Field = HashMap()
+    fieldArray.zipWithIndex.map { case (li, idxli) =>
+      li.zipWithIndex.map { case (sq, idxCol) => fieldMap = fieldMap + (Coord(idxli, idxCol) -> sq) }
+    }
+
+    val boxes = (for (li <- fieldArray.indices; col <- fieldArray(li).indices if fieldArray(li)(col) == SquareType.Box)
+      yield Coord(li, col)).toSet
+
+    (GameState(fieldMap, pos, boxes), lig ,nbCol)
   }
 
   private def getGoals(): Set[Coord] = {
-    (for (li <- field.indices; col <- field(li).indices if field(li)(col) == SquareType.Goal)
-      yield Coord(li, col)).toSet
+    (for (li <- field.toSet if li._2 == SquareType.Goal)
+      yield li._1).toSet
   }
 
   private def drawField() = {
@@ -80,16 +93,15 @@ class Maze {
     }
     println()
 
-    this.field.zipWithIndex.foreach { case (li, idx) =>
-      // print col index
-      print(Console.RESET + idx + " ")
-      if (idx < 10) print(" ")
-      li.foreach(sq => print(getColor(sq) + s"${sq.id}  "))
-      print('\n')
+    for(lig <- 0 until this.lig) {
+      print(lig + "  ")
+      for(col <- 0 until this.col){
+        val sq = this.field(Coord(lig, col))
+        print(getColor(sq) + sq.id + "  ")
+      }
+      println()
     }
   }
-
-
 }
 
-case class GameState(field: Array[Array[SquareType]], playerPos: Coord, posBoxes: Set[Coord])
+case class GameState(field: Field, playerPos: Coord, posBoxes: Set[Coord])
