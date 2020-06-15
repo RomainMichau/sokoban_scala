@@ -8,8 +8,8 @@ import scala.io.{BufferedSource, Source}
 
 object Direction extends Enumeration {
   type  Direction = Value
-  val TOP = Value(0)
-  val BOTTOM = Value(1)
+  val UP = Value(0)
+  val DOWN = Value(1)
   val LEFT = Value(2)
   val RIGHT = Value(3)
 }
@@ -26,7 +26,7 @@ class Maze {
   // if you use intelliJ you need to configure the resource file in the project struct
   // see: https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000168244/comments/115000201030
   val fileStream = getClass.getResourceAsStream("/levels/medium/medium_2.dat")
-  var currentGameState  = loadLevelFromFile(Source.fromInputStream(fileStream))
+  private var currentGameState  = loadLevelFromFile(Source.fromInputStream(fileStream))
 
   private val field: Field = currentGameState.field
   private def posPlayer: Coord = currentGameState.playerPos
@@ -38,6 +38,8 @@ class Maze {
   val goals: Set[Coord] = this.getGoals()
   drawField()
 
+  def getGameState(): GameState = currentGameState
+
 
   def movePlayer(direction: Direction): Boolean = {
     val dest = posPlayer.getCoordAfterMove(direction)
@@ -45,26 +47,18 @@ class Maze {
       val destSq = field(dest)
       if (destSq.isWalkable) {
         this.currentGameState.playerPos = dest
+        this.drawField()
         true
       }
       else if (destSq.isABox) {
+        this.drawField()
+
         this.pushBox(dest, direction)
       }
       else false
     }
     else false
   }
-
-  //def moveBox(box: Coord)
-
-  def toSeq(): Seq[Seq[SquareType]] = {
-    (0 until this.nbLig).map{lig =>
-      (0 until this.nbCol).map{col =>
-        field(Coord(lig, col))
-      }
-    }
-  }
-
 
   private def pushBox(boxCoord: Coord, direction: Direction): Boolean = {
     canPushBox(boxCoord, direction).exists { dest =>
