@@ -38,6 +38,7 @@ class Maze {
   val goals: Set[Coord] = this.getGoals()
   drawField()
 
+
   def movePlayer(direction: Direction): Boolean = {
     val dest = posPlayer.getCoordAfterMove(direction)
     if(dest.isInField()) {
@@ -55,6 +56,15 @@ class Maze {
   }
 
   //def moveBox(box: Coord)
+
+  def toSeq(): Seq[Seq[SquareType]] = {
+    (0 until this.nbLig).map{lig =>
+      (0 until this.nbCol).map{col =>
+        field(Coord(lig, col))
+      }
+    }
+  }
+
 
   private def pushBox(boxCoord: Coord, direction: Direction): Boolean = {
     canPushBox(boxCoord, direction).exists { dest =>

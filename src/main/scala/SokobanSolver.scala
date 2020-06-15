@@ -1,5 +1,10 @@
 import java.awt.BorderLayout
 
-object SokobanSolver extends App{
-  val gui = SokoGui.
+import com.rmichau.soko.Maze.Maze
+import scalafx.application.JFXApp
+
+object SokobanSolver extends JFXApp{
+    val maze = new Maze
+    val gui = new SokoGui()
+    gui.stage(maze)
 }
