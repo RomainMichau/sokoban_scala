@@ -7,7 +7,7 @@ import scala.collection.{immutable, mutable}
 import scala.io.{BufferedSource, Source}
 
 object Direction extends Enumeration {
-  type  Direction = Value
+  type Direction = Value
   val UP = Value(0)
   val DOWN = Value(1)
   val LEFT = Value(2)
@@ -18,21 +18,27 @@ object Maze {
   type Field = mutable.HashMap[Coord, SquareType]
   private var nbLig = 0
   private var nbCol = 0
+
   def getNbLig = nbLig
+
   def getNbCol = nbCol
 }
 
 class Maze {
   // if you use intelliJ you need to configure the resource file in the project struct
   // see: https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000168244/comments/115000201030
-  val fileStream = getClass.getResourceAsStream("/levels/medium/medium_2.dat")
-  private var currentGameState  = loadLevelFromFile(Source.fromInputStream(fileStream))
+  def fileStream = getClass.getResourceAsStream("/levels/easy/easy_2.dat")
+  private var currentGameState = loadLevelFromFile(Source.fromInputStream(fileStream))
 
-  private val field: Field = currentGameState.field
+  private def field: Field = currentGameState.field
+
   private def posPlayer: Coord = currentGameState.playerPos
+
   private def boxes: Set[Coord] = currentGameState.posBoxes
+
   private def nbCol: Int = Maze.getNbCol
-  private def nbLig: Int= Maze.getNbLig
+
+  private def nbLig: Int = Maze.getNbLig
 
 
   val goals: Set[Coord] = this.getGoals()
@@ -43,29 +49,39 @@ class Maze {
 
   def movePlayer(direction: Direction): Boolean = {
     val dest = posPlayer.getCoordAfterMove(direction)
-    if(dest.isInField()) {
+    if (dest.isInField()) {
       val destSq = field(dest)
       if (destSq.isWalkable) {
         this.currentGameState.playerPos = dest
         this.drawField()
-        true
+        hasWon
       }
       else if (destSq.isABox) {
-        this.drawField()
-
-        this.pushBox(dest, direction)
+        if (this.pushBox(dest, direction)) {
+          this.currentGameState.playerPos = dest
+          this.drawField()
+        }
+        hasWon
       }
-      else false
+      hasWon
     }
-    else false
+    hasWon
+  }
+
+  private def hasWon() = {
+    val wom = this.getGoals() == this.boxes
+    if(wom){
+      println(wom)
+    }
+    wom
   }
 
   private def pushBox(boxCoord: Coord, direction: Direction): Boolean = {
     canPushBox(boxCoord, direction).exists { dest =>
       val boxSq = field(boxCoord)
       val destSq = field(dest)
-      boxes - boxCoord
-      boxes + dest
+      currentGameState.posBoxes = boxes - boxCoord
+      currentGameState.posBoxes = boxes + dest
       if (boxSq.sqType == SquareTypeEnum.BoxPlaced) {
         currentGameState.field(boxCoord) = SquareType.goal
       }
@@ -82,10 +98,13 @@ class Maze {
     }
   }
 
+  def reinitGame = this.currentGameState = loadLevelFromFile(Source.fromInputStream(fileStream))
+
   private def canPushBox(boxCoord: Coord, direction: Direction): Option[Coord] = {
     val dest = boxCoord.getCoordAfterMove(direction)
+    val destsq = field(dest)
     val sq = field(boxCoord)
-    if (sq.isABox && dest.isInField() && sq.isWalkable)
+    if (sq.isABox && dest.isInField() && destsq.isWalkable)
       Some(dest)
     else
       None
@@ -97,6 +116,7 @@ class Maze {
 
   private def loadLevelFromFile(level: BufferedSource): GameState = {
     val fileLines = level.getLines().toArray
+    level.close()
     Maze.nbCol = fileLines.map(_.length).max
     Maze.nbLig = fileLines.length
     var pos = Coord(0, 0)
@@ -148,11 +168,11 @@ class Maze {
     }
     println()
 
-    for(lig <- 0 until this.nbLig) {
+    for (lig <- 0 until this.nbLig) {
       print(lig + "  ")
-      for(col <- 0 until this.nbCol){
+      for (col <- 0 until this.nbCol) {
         val sq = this.field(Coord(lig, col))
-        if(Coord(lig, col) != posPlayer)
+        if (Coord(lig, col) != posPlayer)
           print(getColor(sq) + sq.sym + "  ")
         else print(Console.YELLOW + 5 + "  ")
       }
@@ -161,11 +181,11 @@ class Maze {
   }
 }
 
-case class GameState(var field: Field, var playerPos: Coord, posBoxes: Set[Coord])
+case class GameState(var field: Field, var playerPos: Coord, var posBoxes: Set[Coord])
 
 
 object SquareTypeEnum extends Enumeration {
-  type  SquareTypeEnum = Value
+  type SquareTypeEnum = Value
   val Ground = Value(0)
   val Wall = Value(1)
   val Box = Value(2)
@@ -175,12 +195,17 @@ object SquareTypeEnum extends Enumeration {
 }
 
 
-object SquareType{
+object SquareType {
   def box: SquareType = SquareType(SquareTypeEnum.Box)
+
   def ground: SquareType = SquareType(SquareTypeEnum.Ground)
+
   def wall: SquareType = SquareType(SquareTypeEnum.Wall)
+
   def boxPlaced: SquareType = SquareType(SquareTypeEnum.BoxPlaced)
+
   def goal: SquareType = SquareType(SquareTypeEnum.Goal)
+
   def deadSquare: SquareType = SquareType(SquareTypeEnum.DeadSquare)
 }
 
@@ -190,7 +215,7 @@ case class SquareType(val sqType: SquareTypeEnum) {
     case SquareTypeEnum.Ground | SquareTypeEnum.DeadSquare | SquareTypeEnum.Goal => true
     case _ => false
   }
-  lazy val isABox =  sqType match {
+  lazy val isABox = sqType match {
     case SquareTypeEnum.Box | SquareTypeEnum.BoxPlaced => true
     case _ => false
   }

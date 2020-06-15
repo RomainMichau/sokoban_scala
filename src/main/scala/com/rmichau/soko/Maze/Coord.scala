@@ -15,5 +15,7 @@ case class Coord(lig: Int, col: Int){
   def isInField() : Boolean = {
     lig >= 0 && lig < Maze.getNbLig && col >= 0 && col < Maze.getNbCol
   }
+
+  override def toString: String = s"$lig;$col"
 }
 
