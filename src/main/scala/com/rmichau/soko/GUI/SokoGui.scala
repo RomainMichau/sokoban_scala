@@ -1,3 +1,4 @@
+import com.rmichau.soko.GUI.SokoStage
 import com.rmichau.soko.Maze.SquareTypeEnum.SquareTypeEnum
 import com.rmichau.soko.Maze.{Coord, Direction, Maze, SquareType, SquareTypeEnum}
 import javafx.beans.property.SimpleObjectProperty
@@ -29,10 +30,10 @@ class SokoGui(maze: Maze) {
   val mazeProp: ObjectProperty[Maze] = new SimpleObjectProperty[Maze](maze)
   var gridNodes: Map[Coord, ImageView] = HashMap()
   private val fieldImages: Map[SquareTypeEnum, Image] = {
-    val ressourcePath = getClass.getResource("/img/").toString
+    val imgPath = SokoStage.imgPath
     var mp: Map[SquareTypeEnum, Image] = HashMap()
     SquareTypeEnum.values.foreach{sq =>
-      val url = ressourcePath+sq.toString+".jpg"
+      val url = imgPath+sq.toString+".jpg"
       val img = getImageFromPath(url)
       if(img.width == null)
         throw new Exception(s"img $url does not exist")
@@ -61,13 +62,12 @@ class SokoGui(maze: Maze) {
   private def posPlayer = maze.getGameState().playerPos
 
   def stage = {
-    new PrimaryStage() {
-      title = "Soko"
-      scene = new Scene {
+
+   val scene = new Scene {
         onKeyPressed = keyEventManager
         content = grid
-      }
     }
+    SokoStage.changeScene(scene)
   }
 
   private def refreshGrid() = {

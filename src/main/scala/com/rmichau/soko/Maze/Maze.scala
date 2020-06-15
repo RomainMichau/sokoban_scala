@@ -1,8 +1,11 @@
 package com.rmichau.soko.Maze
 
+import java.net.URI
+
 import com.rmichau.soko.Maze.Direction.Direction
 import com.rmichau.soko.Maze.Maze.Field
 import com.rmichau.soko.Maze.SquareTypeEnum.SquareTypeEnum
+
 import scala.collection.{immutable, mutable}
 import scala.io.{BufferedSource, Source}
 
@@ -24,11 +27,10 @@ object Maze {
   def getNbCol = nbCol
 }
 
-class Maze {
+class Maze(filePath: URI) {
   // if you use intelliJ you need to configure the resource file in the project struct
   // see: https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000168244/comments/115000201030
-  def fileStream = getClass.getResourceAsStream("/levels/easy/easy_2.dat")
-  private var currentGameState = loadLevelFromFile(Source.fromInputStream(fileStream))
+  private var currentGameState = loadLevelFromFile(filePath)
 
   private def field: Field = currentGameState.field
 
@@ -53,7 +55,7 @@ class Maze {
       val destSq = field(dest)
       if (destSq.isWalkable) {
         this.currentGameState.playerPos = dest
-        this.drawField()
+        //this.drawField()
         hasWon
       }
       else if (destSq.isABox) {
@@ -98,7 +100,7 @@ class Maze {
     }
   }
 
-  def reinitGame = this.currentGameState = loadLevelFromFile(Source.fromInputStream(fileStream))
+  def reinitGame = this.currentGameState = loadLevelFromFile(filePath)
 
   private def canPushBox(boxCoord: Coord, direction: Direction): Option[Coord] = {
     val dest = boxCoord.getCoordAfterMove(direction)
@@ -114,9 +116,8 @@ class Maze {
     this.currentGameState = gameState
   }
 
-  private def loadLevelFromFile(level: BufferedSource): GameState = {
-    val fileLines = level.getLines().toArray
-    level.close()
+  private def loadLevelFromFile(filePath: URI): GameState = {
+    val fileLines = Source.fromFile(filePath).getLines().toList
     Maze.nbCol = fileLines.map(_.length).max
     Maze.nbLig = fileLines.length
     var pos = Coord(0, 0)
@@ -130,7 +131,7 @@ class Maze {
           SquareType(SquareTypeEnum(sq.asDigit))
         }
       } ++ Array.fill(Maze.nbCol - li.length)(SquareType(SquareTypeEnum.Wall))
-    }
+    }.toArray
 
     var fieldMap: Field = mutable.HashMap()
     fieldArray.zipWithIndex.map { case (li, idxli) =>
