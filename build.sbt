@@ -21,3 +21,4 @@ val osName = System.getProperty("os.name") match {
 }
 libraryDependencies ++= javafxModules.map(m => "org.openjfx" % s"javafx-$m" % "14.0.1" classifier osName)
 
+fork in run := true
