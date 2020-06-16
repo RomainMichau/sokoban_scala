@@ -8,6 +8,7 @@ import com.rmichau.soko.Maze.SquareTypeEnum.SquareTypeEnum
 
 import scala.collection.{immutable, mutable}
 import scala.io.{BufferedSource, Source}
+import scala.util.Try
 
 object Direction extends Enumeration {
   type Direction = Value
@@ -117,7 +118,15 @@ class Maze(filePath: URI) {
   }
 
   private def loadLevelFromFile(filePath: URI): GameState = {
-    val fileLines = Source.fromFile(filePath).getLines().toList
+    val source =
+      try{
+        Source.fromFile(filePath)
+      } catch {
+        case e: Exception => throw new Exception(s"lvl '${filePath.toString}' does not exist: $e")
+      }
+
+    val fileLines = source.getLines().toList
+    source.close()
     Maze.nbCol = fileLines.map(_.length).max
     Maze.nbLig = fileLines.length
     var pos = Coord(0, 0)

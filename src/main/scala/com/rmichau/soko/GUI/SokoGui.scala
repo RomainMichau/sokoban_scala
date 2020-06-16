@@ -110,27 +110,4 @@ class SokoGui(maze: Maze) {
     Tooltip.install(img, new Tooltip(coord.toString))
     img
   }
-/*
-  private def getRect(square: SquareType, coord: Coord, isPlayer: Boolean = false): Rectangle = {
-    val r = new Rectangle {
-      width = 30
-      height = 30
-      strokeType = StrokeType.INSIDE
-      strokeWidth = 0.7
-      stroke = Color.Black
-      fill = if (!isPlayer)
-        square.sqType match {
-          case SquareTypeEnum.Box => Color.Blue
-          case SquareTypeEnum.BoxPlaced => Color.GreenYellow
-          case SquareTypeEnum.Wall => Color.Magenta
-          case SquareTypeEnum.Goal => Color.Green
-          case SquareTypeEnum.DeadSquare => Color.Red
-          case SquareTypeEnum.Ground => Color.White
-        }
-      else
-        Color.Yellow
-    }
-    Tooltip.install(r, new Tooltip(coord.toString))
-    r
-  }*/
 }
