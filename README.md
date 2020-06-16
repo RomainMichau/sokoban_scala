@@ -4,3 +4,6 @@ This project has been develop in Scala and use graph theory
 
 ScalaFX is used for the GUI
 *By Romain Michau*
+
+To make it run:
+`sbt run`

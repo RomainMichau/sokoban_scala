@@ -23,7 +23,7 @@ class LevelPicker {
 
   val dialogStage = new Stage()
   var res: URI = null
-  val files: ObservableBuffer[File]= ObservableBuffer(this.recursiveListFiles(new File(SokoStage.levelPath.replace("file:","")))
+  val files: ObservableBuffer[File]= ObservableBuffer(this.recursiveListFiles(new File("levels"))
     .filter(_.isFile).toList)
 
   def pickLevel = {

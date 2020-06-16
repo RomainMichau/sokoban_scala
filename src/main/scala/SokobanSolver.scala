@@ -12,4 +12,6 @@ object SokobanSolver extends JFXApp{
     val maze = new Maze(lvl)
     val gui = new SokoGui(maze)
     gui.stage
+
+
 }
