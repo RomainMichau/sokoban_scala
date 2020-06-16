@@ -135,7 +135,7 @@ class Maze(filePath: URI) {
 
     var fieldMap: Field = mutable.HashMap()
     fieldArray.zipWithIndex.map { case (li, idxli) =>
-      li.zipWithIndex.map { case (sq, idxCol) => fieldMap = fieldMap + (Coord(idxli, idxCol) -> sq) }
+      li.zipWithIndex.map { case (sq, idxCol) => fieldMap += (Coord(idxli, idxCol) -> sq) }
     }
 
     val boxes = (for (li <- fieldArray.indices; col <- fieldArray(li).indices if fieldArray(li)(col).sqType == SquareTypeEnum.Box)
