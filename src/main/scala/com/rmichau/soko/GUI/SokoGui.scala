@@ -1,29 +1,16 @@
 import com.rmichau.soko.GUI.SokoStage
 import com.rmichau.soko.Maze.SquareTypeEnum.SquareTypeEnum
-import com.rmichau.soko.Maze.{Coord, Direction, Maze, SquareType, SquareTypeEnum}
+import com.rmichau.soko.Maze._
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.control.Tooltip
 import scalafx.Includes._
-import javafx.scene.layout.RowConstraints
-import javafx.scene.shape.StrokeType
-import scalafx.application.JFXApp
-import scalafx.application.JFXApp.PrimaryStage
-import scalafx.beans.property.{DoubleProperty, ObjectProperty, StringProperty}
-import scalafx.collections.ObservableBuffer
-import scalafx.geometry.{HPos, Insets, Pos, VPos}
+import scalafx.beans.property.ObjectProperty
 import scalafx.scene.Scene
-import scalafx.scene.control.{Label, TableCell, TableColumn, TableView}
-import scalafx.scene.effect.DropShadow
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.input.{KeyCode, KeyEvent}
-import scalafx.scene.layout.{ColumnConstraints, GridPane, HBox, Priority}
-import scalafx.scene.paint.{Color, LinearGradient, Stops}
-import scalafx.scene.paint.Color._
-import scalafx.scene.shape.{Circle, Rectangle}
-import scalafx.scene.text.Text
+import scalafx.scene.layout.GridPane
 
 import scala.collection.immutable.HashMap
-import scala.collection.mutable
 
 class SokoGui(maze: Maze) {
 

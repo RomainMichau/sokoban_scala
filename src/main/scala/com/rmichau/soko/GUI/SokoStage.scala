@@ -1,6 +1,5 @@
 package com.rmichau.soko.GUI
 
-import javafx.stage.Stage
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.scene.Scene
 import scalafx.scene.image.Image

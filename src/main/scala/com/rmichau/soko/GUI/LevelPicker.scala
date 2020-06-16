@@ -4,12 +4,9 @@ package com.rmichau.soko.GUI
 import java.io.File
 import java.net.URI
 
-import javafx.event.EventHandler
-import scalafx.beans.property.StringProperty
-import scalafx.collections.ObservableBuffer
-import javafx.event.ActionEvent
+import javafx.event.{ActionEvent, EventHandler}
 import javafx.stage.Stage
-import scalafx.scene.AccessibleRole.{Button, ComboBox}
+import scalafx.collections.ObservableBuffer
 import scalafx.scene.Scene
 import scalafx.scene.control.{Button, ComboBox, Label}
 import scalafx.scene.layout.GridPane

@@ -6,9 +6,8 @@ import com.rmichau.soko.Maze.Direction.Direction
 import com.rmichau.soko.Maze.Maze.Field
 import com.rmichau.soko.Maze.SquareTypeEnum.SquareTypeEnum
 
-import scala.collection.{immutable, mutable}
-import scala.io.{BufferedSource, Source}
-import scala.util.Try
+import scala.collection.mutable
+import scala.io.Source
 
 object Direction extends Enumeration {
   type Direction = Value
