@@ -1,11 +1,12 @@
 import com.rmichau.soko.GUI.SokoStage
-import com.rmichau.soko.Maze.SquareTypeEnum.SquareTypeEnum
+import com.rmichau.soko.Maze.SquareType.SquareTypeEnum
 import com.rmichau.soko.Maze._
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.control.Tooltip
 import scalafx.Includes._
 import scalafx.beans.property.ObjectProperty
 import scalafx.scene.Scene
+import scalafx.scene.control.Alert
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.input.{KeyCode, KeyEvent}
 import scalafx.scene.layout.GridPane
@@ -19,26 +20,27 @@ class SokoGui(maze: Maze) {
   private val fieldImages: Map[SquareTypeEnum, Image] = {
     val imgPath = SokoStage.imgPath
     var mp: Map[SquareTypeEnum, Image] = HashMap()
-    SquareTypeEnum.values.foreach{sq =>
-      val url = imgPath+sq.toString+".jpg"
+    SquareType.values.foreach { sq =>
+      val url = imgPath + sq.toString + ".jpg"
       val img = getImageFromPath(url)
-      if(img.width == null)
+      if (img.width == null)
         throw new Exception(s"img $url does not exist")
-      mp = mp + (sq -> img)}
+      mp = mp + (sq -> img)
+    }
     mp
   }
   private val marioImg = getImageFromPath(getClass.getResource("/img/mario.jpg").toString)
-  val grid = loadMaze()
+  val grid: GridPane = loadMaze()
 
-  val keyEventManager = { key: KeyEvent =>
+  val keyEventManager: KeyEvent => Unit = { key: KeyEvent =>
     if (KeyCode.Up.getCode == key.getCode.getCode)
-      maze.movePlayer(Direction.UP)
+      this.movePlayer(UP)
     if (KeyCode.Down.getCode == key.getCode.getCode)
-      maze.movePlayer(Direction.DOWN)
+      this.movePlayer(DOWN)
     if (KeyCode.Left.getCode == key.getCode.getCode)
-      maze.movePlayer(Direction.LEFT)
+      this.movePlayer(LEFT)
     if (KeyCode.Right.getCode == key.getCode.getCode)
-      maze.movePlayer(Direction.RIGHT)
+      this.movePlayer(RIGHT)
     if (KeyCode.Escape.getCode == key.getCode.getCode)
       maze.reinitGame
     refreshGrid()
@@ -48,16 +50,16 @@ class SokoGui(maze: Maze) {
 
   private def posPlayer = maze.getGameState().playerPos
 
-  def stage = {
+  def stage(): Unit = {
 
-   val scene = new Scene {
-        onKeyPressed = keyEventManager
-        content = grid
+    val scene = new Scene {
+      onKeyPressed = keyEventManager
+      content = grid
     }
-    SokoStage.changeScene(scene)
+    SokoStage.setScene(scene)
   }
 
-  private def refreshGrid() = {
+  private def refreshGrid(): Unit = {
     (0 until Maze.getNbLig).indices.foreach { lig =>
       (0 until Maze.getNbCol).map { col =>
         val coord = Coord(lig, col)
@@ -89,12 +91,23 @@ class SokoGui(maze: Maze) {
     new Image(url, 30, 30, false, false)
   }
 
-  private def getImgView(square: SquareType, coord: Coord, isPlayer: Boolean = false): ImageView = {
-    val img = if(!isPlayer)
+  private def getImgView(square: Square, coord: Coord, isPlayer: Boolean = false): ImageView = {
+    val img = if (!isPlayer)
       new ImageView(fieldImages(square.sqType))
     else
-     new ImageView(marioImg)
+      new ImageView(marioImg)
     Tooltip.install(img, new Tooltip(coord.toString))
     img
+  }
+
+  private def movePlayer(direction: Direction) = {
+    if (maze.movePlayer(direction)) {
+      import javafx.scene.control.Alert.AlertType
+      new Alert(AlertType.INFORMATION) {
+        title = "You won!!!"
+        headerText = "You won!!!"
+        contentText = "You won!!!"
+      }.showAndWait()
+    }
   }
 }

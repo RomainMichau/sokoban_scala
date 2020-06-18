@@ -2,23 +2,15 @@ package com.rmichau.soko.Maze
 
 import java.net.URI
 
-import com.rmichau.soko.Maze.Direction.Direction
-import com.rmichau.soko.Maze.Maze.Field
-import com.rmichau.soko.Maze.SquareTypeEnum.SquareTypeEnum
+import com.rmichau.soko.Maze
+import com.rmichau.soko.Maze.SquareType.SquareTypeEnum
 
-import scala.collection.mutable
-import scala.io.Source
+import scala.collection.immutable.HashMap
+import scala.collection.{immutable, mutable}
+import scala.io.{BufferedSource, Source}
 
-object Direction extends Enumeration {
-  type Direction = Value
-  val UP = Value(0)
-  val DOWN = Value(1)
-  val LEFT = Value(2)
-  val RIGHT = Value(3)
-}
 
 object Maze {
-  type Field = mutable.HashMap[Coord, SquareType]
   private var nbLig = 0
   private var nbCol = 0
 
@@ -32,7 +24,7 @@ class Maze(filePath: URI) {
   // see: https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000168244/comments/115000201030
   private var currentGameState = loadLevelFromFile(filePath)
 
-  private def field: Field = currentGameState.field
+  def field: Field = currentGameState.field
 
   private def posPlayer: Coord = currentGameState.playerPos
 
@@ -51,7 +43,7 @@ class Maze(filePath: URI) {
 
   def movePlayer(direction: Direction): Boolean = {
     val dest = posPlayer.getCoordAfterMove(direction)
-    if (dest.isInField()) {
+    if (dest.isInField) {
       val destSq = field(dest)
       if (destSq.isWalkable) {
         this.currentGameState.playerPos = dest
@@ -70,32 +62,15 @@ class Maze(filePath: URI) {
     hasWon
   }
 
-  private def hasWon() = {
-    val wom = this.getGoals() == this.boxes
-    if(wom){
-      println(wom)
-    }
-    wom
+  private def hasWon = {
+     this.getGoals() == this.boxes
   }
 
   private def pushBox(boxCoord: Coord, direction: Direction): Boolean = {
     canPushBox(boxCoord, direction).exists { dest =>
-      val boxSq = field(boxCoord)
-      val destSq = field(dest)
       currentGameState.posBoxes = boxes - boxCoord
       currentGameState.posBoxes = boxes + dest
-      if (boxSq.sqType == SquareTypeEnum.BoxPlaced) {
-        currentGameState.field(boxCoord) = SquareType.goal
-      }
-      else {
-        currentGameState.field(boxCoord) = SquareType.ground
-      }
-      if (destSq.sqType == SquareTypeEnum.Goal) {
-        currentGameState.field(dest) = SquareType.boxPlaced
-      }
-      else {
-        currentGameState.field(dest) = SquareType.box
-      }
+      field.pushBox(boxCoord, direction)
       true
     }
   }
@@ -106,7 +81,7 @@ class Maze(filePath: URI) {
     val dest = boxCoord.getCoordAfterMove(direction)
     val destsq = field(dest)
     val sq = field(boxCoord)
-    if (sq.isABox && dest.isInField() && destsq.isWalkable)
+    if (sq.isABox && dest.isInField && destsq.isWalkable)
       Some(dest)
     else
       None
@@ -129,43 +104,43 @@ class Maze(filePath: URI) {
     Maze.nbCol = fileLines.map(_.length).max
     Maze.nbLig = fileLines.length
     var pos = Coord(0, 0)
-    val fieldArray: Array[Array[SquareType]] = fileLines.zipWithIndex.map { case (li, idxli) =>
+    val fieldArray: Array[Array[Square]] = fileLines.zipWithIndex.map { case (li, idxli) =>
       li.toCharArray.zipWithIndex.map { case (sq, idxCol) =>
         if (sq.asDigit == 5) {
           pos = Coord(idxli, idxCol)
-          SquareType(SquareTypeEnum.Ground)
+          Square(SquareType.Ground, pos)
         }
         else {
-          SquareType(SquareTypeEnum(sq.asDigit))
+          Square(SquareType(sq.asDigit), Coord(idxli, idxCol))
         }
-      } ++ Array.fill(Maze.nbCol - li.length)(SquareType(SquareTypeEnum.Wall))
+      } ++ (li.length until Maze.nbCol ).map(col => Square.wall(Coord(idxli, col)))
     }.toArray
 
-    var fieldMap: Field = mutable.HashMap()
-    fieldArray.zipWithIndex.map { case (li, idxli) =>
-      li.zipWithIndex.map { case (sq, idxCol) => fieldMap += (Coord(idxli, idxCol) -> sq) }
-    }
+    val fieldMap: Map[Coord, Square] =
+    fieldArray.zipWithIndex.flatMap{ case (li, idxli) =>
+      li.zipWithIndex.map { case (sq, idxCol) => (Coord(idxli, idxCol) -> sq) }
+    }.toMap
 
-    val boxes = (for (li <- fieldArray.indices; col <- fieldArray(li).indices if fieldArray(li)(col).sqType == SquareTypeEnum.Box)
+    val boxes = (for (li <- fieldArray.indices; col <- fieldArray(li).indices if fieldArray(li)(col).sqType == SquareType.Box)
       yield Coord(li, col)).toSet
 
-    GameState(fieldMap, pos, boxes)
+    GameState(new Field(fieldMap), pos, boxes)
   }
 
   private def getGoals(): Set[Coord] = {
-    (for (li <- field.toSet if li._2.sqType == SquareTypeEnum.Goal)
+    (for (li <- field.toSet if li._2.sqType == SquareType.Goal || li._2.sqType == SquareType.BoxPlaced)
       yield li._1)
   }
 
   private def drawField() = {
 
-    def getColor(square: SquareType): String = {
+    def getColor(square: Square): String = {
       square.sqType match {
-        case SquareTypeEnum.Box | SquareTypeEnum.BoxPlaced => Console.BLUE
-        case SquareTypeEnum.Wall => Console.MAGENTA
-        case SquareTypeEnum.Goal => Console.GREEN
-        case SquareTypeEnum.DeadSquare => Console.RED
-        case SquareTypeEnum.Ground => Console.WHITE
+        case SquareType.Box | SquareType.BoxPlaced => Console.BLUE
+        case SquareType.Wall => Console.MAGENTA
+        case SquareType.Goal => Console.GREEN
+        case SquareType.DeadSquare => Console.RED
+        case SquareType.Ground => Console.WHITE
       }
     }
 
@@ -193,39 +168,7 @@ class Maze(filePath: URI) {
 case class GameState(var field: Field, var playerPos: Coord, var posBoxes: Set[Coord])
 
 
-object SquareTypeEnum extends Enumeration {
-  type SquareTypeEnum = Value
-  val Ground = Value(0)
-  val Wall = Value(1)
-  val Box = Value(2)
-  val BoxPlaced = Value(3)
-  val Goal = Value(4)
-  val DeadSquare = Value(9)
-}
 
 
-object SquareType {
-  def box: SquareType = SquareType(SquareTypeEnum.Box)
 
-  def ground: SquareType = SquareType(SquareTypeEnum.Ground)
 
-  def wall: SquareType = SquareType(SquareTypeEnum.Wall)
-
-  def boxPlaced: SquareType = SquareType(SquareTypeEnum.BoxPlaced)
-
-  def goal: SquareType = SquareType(SquareTypeEnum.Goal)
-
-  def deadSquare: SquareType = SquareType(SquareTypeEnum.DeadSquare)
-}
-
-case class SquareType(val sqType: SquareTypeEnum) {
-  lazy val sym = sqType.id
-  lazy val isWalkable = sqType match {
-    case SquareTypeEnum.Ground | SquareTypeEnum.DeadSquare | SquareTypeEnum.Goal => true
-    case _ => false
-  }
-  lazy val isABox = sqType match {
-    case SquareTypeEnum.Box | SquareTypeEnum.BoxPlaced => true
-    case _ => false
-  }
-}
