@@ -1,5 +1,6 @@
-import com.rmichau.soko.GUI.SokoStage
-import com.rmichau.soko.Maze.SquareType.SquareTypeEnum
+package com.rmichau.soko.GUI
+
+import com.rmichau.soko.Maze.SquareType.SquareType
 import com.rmichau.soko.Maze._
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.control.Tooltip
@@ -17,9 +18,9 @@ class SokoGui(maze: Maze) {
 
   val mazeProp: ObjectProperty[Maze] = new SimpleObjectProperty[Maze](maze)
   var gridNodes: Map[Coord, ImageView] = HashMap()
-  private val fieldImages: Map[SquareTypeEnum, Image] = {
+  private val fieldImages: Map[SquareType, Image] = {
     val imgPath = SokoStage.imgPath
-    var mp: Map[SquareTypeEnum, Image] = HashMap()
+    var mp: Map[SquareType, Image] = HashMap()
     SquareType.values.foreach { sq =>
       val url = imgPath + sq.toString + ".jpg"
       val img = getImageFromPath(url)
@@ -42,13 +43,13 @@ class SokoGui(maze: Maze) {
     if (KeyCode.Right.getCode == key.getCode.getCode)
       this.movePlayer(RIGHT)
     if (KeyCode.Escape.getCode == key.getCode.getCode)
-      maze.reinitGame
+      maze.reinitGame()
     refreshGrid()
   }
 
-  private def field = maze.getGameState().field
+  private def field = maze.getGameState.field
 
-  private def posPlayer = maze.getGameState().playerPos
+  private def posPlayer = maze.getGameState.playerPos
 
   def stage(): Unit = {
 
@@ -72,8 +73,8 @@ class SokoGui(maze: Maze) {
   }
 
   private def loadMaze(): GridPane = {
-    val field = maze.getGameState().field
-    val posPlayer = maze.getGameState().playerPos
+    val field = maze.getGameState.field
+    val posPlayer = maze.getGameState.playerPos
     val pane = new GridPane()
 
     (0 until Maze.getNbLig).indices.foreach { lig =>

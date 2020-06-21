@@ -18,11 +18,11 @@ case object DOWN extends Direction {
   override def getAdj: (Direction, Direction) = (LEFT, RIGHT)
 }
 case object LEFT extends Direction {
-  override def getOpposite: Direction = LEFT
+  override def getOpposite: Direction = RIGHT
   override def getAdj: (Direction, Direction) = (UP, DOWN)
 
 }
 case object RIGHT extends Direction {
-  override def getOpposite: Direction = RIGHT
+  override def getOpposite: Direction = LEFT
   override def getAdj: (Direction, Direction) = (UP, DOWN)
 }

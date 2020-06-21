@@ -2,21 +2,18 @@ package com.rmichau.soko.Maze
 
 import java.net.URI
 
-import com.rmichau.soko.Maze
-import com.rmichau.soko.Maze.SquareType.SquareTypeEnum
+import com.rmichau.soko.Solver.Deadlocks
 
-import scala.collection.immutable.HashMap
-import scala.collection.{immutable, mutable}
-import scala.io.{BufferedSource, Source}
+import scala.io.Source
 
 
 object Maze {
   private var nbLig = 0
   private var nbCol = 0
 
-  def getNbLig = nbLig
+  def getNbLig: Int = nbLig
 
-  def getNbCol = nbCol
+  def getNbCol: Int = nbCol
 }
 
 class Maze(filePath: URI) {
@@ -34,12 +31,11 @@ class Maze(filePath: URI) {
 
   private def nbLig: Int = Maze.getNbLig
 
-
-  val goals: Set[Coord] = this.getGoals()
+  val goals: Set[Coord] = this.getGoals
+  detectStaticDeadlocks()
   drawField()
 
-  def getGameState(): GameState = currentGameState
-
+  def getGameState: GameState = currentGameState
 
   def movePlayer(direction: Direction): Boolean = {
     val dest = posPlayer.getCoordAfterMove(direction)
@@ -62,8 +58,21 @@ class Maze(filePath: URI) {
     hasWon
   }
 
+  def changeGameState(gameState: GameState): Unit = {
+    this.currentGameState = gameState
+  }
+
+  def reinitGame(): Unit = {
+    this.currentGameState = loadLevelFromFile(filePath)
+    this.detectStaticDeadlocks()
+  }
+
+  private def detectStaticDeadlocks(): Unit = {
+    Deadlocks.detectStaticDeadLocks(field).foreach(sq => field += Square.deadSquare(sq.coord))
+  }
+
   private def hasWon = {
-     this.getGoals() == this.boxes
+     this.getGoals == this.boxes
   }
 
   private def pushBox(boxCoord: Coord, direction: Direction): Boolean = {
@@ -75,8 +84,6 @@ class Maze(filePath: URI) {
     }
   }
 
-  def reinitGame = this.currentGameState = loadLevelFromFile(filePath)
-
   private def canPushBox(boxCoord: Coord, direction: Direction): Option[Coord] = {
     val dest = boxCoord.getCoordAfterMove(direction)
     val destsq = field(dest)
@@ -85,10 +92,6 @@ class Maze(filePath: URI) {
       Some(dest)
     else
       None
-  }
-
-  def changeGameState(gameState: GameState) = {
-    this.currentGameState = gameState
   }
 
   private def loadLevelFromFile(filePath: URI): GameState = {
@@ -127,19 +130,19 @@ class Maze(filePath: URI) {
     GameState(new Field(fieldMap), pos, boxes)
   }
 
-  private def getGoals(): Set[Coord] = {
+  private def getGoals: Set[Coord] = {
     (for (li <- field.toSet if li._2.sqType == SquareType.Goal || li._2.sqType == SquareType.BoxPlaced)
       yield li._1)
   }
 
-  private def drawField() = {
+  private def drawField(): Unit = {
 
     def getColor(square: Square): String = {
       square.sqType match {
         case SquareType.Box | SquareType.BoxPlaced => Console.BLUE
         case SquareType.Wall => Console.MAGENTA
         case SquareType.Goal => Console.GREEN
-        case SquareType.DeadSquare => Console.RED
+        case SquareType.Deadlock => Console.RED
         case SquareType.Ground => Console.WHITE
       }
     }

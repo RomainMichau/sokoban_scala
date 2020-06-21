@@ -1,6 +1,6 @@
 package com.rmichau.soko.Maze
 
-import com.rmichau.soko.Maze.SquareType.SquareTypeEnum
+import com.rmichau.soko.Maze.SquareType.SquareType
 
 
 
@@ -16,6 +16,8 @@ class Field(private var field: Map[Coord, Square]){
   def pushBox(coord: Coord, direction: Direction): Unit = {
     field = moveBox(coord, direction)
   }
+
+  def getAllSquares: Iterable[Square] = field.values
 
   private def moveBox(coord: Coord, direction: Direction): Map[Coord, Square] = {
     val boxSq = field(coord)
@@ -45,13 +47,13 @@ class Field(private var field: Map[Coord, Square]){
 }
 
 object SquareType extends Enumeration {
-  type SquareTypeEnum = Value
+  type SquareType = Value
   val Ground = Value(0)
   val Wall = Value(1)
   val Box = Value(2)
   val BoxPlaced = Value(3)
   val Goal = Value(4)
-  val DeadSquare = Value(9)
+  val Deadlock = Value(9)
 }
 
 object Square {
@@ -60,16 +62,16 @@ object Square {
   def wall(coord: Coord): Square = Square(SquareType.Wall, coord)
   def boxPlaced(coord: Coord): Square = Square(SquareType.BoxPlaced, coord)
   def goal(coord: Coord): Square = Square(SquareType.Goal, coord)
-  def deadSquare(coord: Coord): Square = Square(SquareType.DeadSquare, coord)
+  def deadSquare(coord: Coord): Square = Square(SquareType.Deadlock, coord)
 }
 
-case class Square(sqType: SquareTypeEnum, coord: Coord) {
-  lazy val sym = sqType.id
-  lazy val isWalkable = sqType match {
-    case SquareType.Ground | SquareType.DeadSquare | SquareType.Goal => true
+case class Square(sqType: SquareType, coord: Coord) {
+  lazy val sym: Int = sqType.id
+  lazy val isWalkable: Boolean = sqType match {
+    case SquareType.Ground | SquareType.Deadlock | SquareType.Goal => true
     case _ => false
   }
-  lazy val isABox = sqType match {
+  lazy val isABox: Boolean = sqType match {
     case SquareType.Box | SquareType.BoxPlaced => true
     case _ => false
   }
