@@ -6,7 +6,7 @@ import com.rmichau.soko.Solver.Node.{MoveNode, MoveNodeState}
 object SolverHelper {
   def detectZoneAccessible(field: Field, pos: Coord): Set[Coord]= {
     BFS.doBFS(
-      MoveNode.getMoveNodeAsABoxInAnEmptyField(MoveNodeState(field, pos)),
+      MoveNode.getFieldNodeAsAPlayerWhoCantPushBox(MoveNodeState(field, pos)),
       new BfsPlainQueue[MoveNode],
       (_: MoveNode) => false)
       .visitedNode

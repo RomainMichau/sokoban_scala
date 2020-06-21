@@ -11,7 +11,7 @@ trait BFSNode[U <: BFSNode[U]] {
   }
 }
 
-trait BFSEdge[U<:BFSNode[U]] {
+trait BFSEdge[U <: BFSNode[U]] {
   val node1: U
   val node2: U
 }

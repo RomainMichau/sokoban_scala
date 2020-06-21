@@ -2,7 +2,7 @@ package com.rmichau.soko.Maze
 
 import java.net.URI
 
-import com.rmichau.soko.Solver.Deadlocks
+import com.rmichau.soko.Solver.{Deadlocks, SolverHelper}
 
 import scala.io.Source
 
@@ -23,7 +23,7 @@ class Maze(filePath: URI) {
 
   def field: Field = currentGameState.field
 
-  private def posPlayer: Coord = currentGameState.playerPos
+  def posPlayer: Coord = currentGameState.playerPos
 
   private def boxes: Set[Coord] = currentGameState.posBoxes
 
@@ -49,7 +49,7 @@ class Maze(filePath: URI) {
       else if (destSq.isABox) {
         if (this.pushBox(dest, direction)) {
           this.currentGameState.playerPos = dest
-          this.drawField()
+          //this.drawField()
         }
         hasWon
       }
