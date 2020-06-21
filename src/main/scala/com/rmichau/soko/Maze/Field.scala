@@ -5,6 +5,10 @@ import com.rmichau.soko.Maze.SquareType.SquareType
 
 
 class Field(private var field: Map[Coord, Square]){
+  private var boxes = field.filter(v => v._2.isABox).keySet
+  val goals: Set[Coord] = field.filter(v => v._2.isAGoal).keySet
+
+  def getBoxes: Set[Coord] = boxes
   def apply(coord: Coord): Square = field(coord)
   def +=(square: Square): Unit = field = field + (square.coord -> square)
   def toSet: Set[(Coord, Square)] = field.toSet
@@ -42,8 +46,12 @@ class Field(private var field: Map[Coord, Square]){
     else {
       Square.box(destSq.coord)
     }
-    field +(oldSq.coord -> oldSq, newSq.coord -> newSq)
+    boxes = boxes - (oldSq.coord) + (destSq.coord)
+    field + (oldSq.coord -> oldSq, newSq.coord -> newSq)
   }
+
+
+
 }
 
 object SquareType extends Enumeration {
@@ -73,6 +81,10 @@ case class Square(sqType: SquareType, coord: Coord) {
   }
   lazy val isABox: Boolean = sqType match {
     case SquareType.Box | SquareType.BoxPlaced => true
+    case _ => false
+  }
+  lazy val isAGoal: Boolean = sqType match {
+    case SquareType.Goal | SquareType.BoxPlaced => true
     case _ => false
   }
 }

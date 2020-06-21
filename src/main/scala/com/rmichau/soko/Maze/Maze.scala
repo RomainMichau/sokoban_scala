@@ -31,7 +31,7 @@ class Maze(filePath: URI) {
 
   private def nbLig: Int = Maze.getNbLig
 
-  val goals: Set[Coord] = this.getGoals
+  val goals: Set[Coord] = field.goals
   detectStaticDeadlocks()
   drawField()
 
@@ -67,18 +67,33 @@ class Maze(filePath: URI) {
     this.detectStaticDeadlocks()
   }
 
+  override def toString: String = {
+    var res =""
+    for (lig <- 0 until this.nbLig) {
+      for (col <- 0 until this.nbCol) {
+        val sq = this.field(Coord(lig, col))
+        if (Coord(lig, col) != posPlayer)
+          res+=sq.sym
+        else res+=5
+      }
+      res+="\n"
+    }
+    res
+  }
+
   private def detectStaticDeadlocks(): Unit = {
+    println("=====DETECTING STATIC DEADLOCKS======")
     Deadlocks.detectStaticDeadLocks(field).foreach(sq => field += Square.deadSquare(sq.coord))
+    println("=====DETECTING STATIC DEADLOCKS DONE======")
+
   }
 
   private def hasWon = {
-     this.getGoals == this.boxes
+     this.goals == this.boxes
   }
 
   private def pushBox(boxCoord: Coord, direction: Direction): Boolean = {
     canPushBox(boxCoord, direction).exists { dest =>
-      currentGameState.posBoxes = boxes - boxCoord
-      currentGameState.posBoxes = boxes + dest
       field.pushBox(boxCoord, direction)
       true
     }
@@ -95,6 +110,7 @@ class Maze(filePath: URI) {
   }
 
   private def loadLevelFromFile(filePath: URI): GameState = {
+    println(s"loading level from file $filePath")
     val source =
       try{
         Source.fromFile(filePath)
@@ -121,18 +137,10 @@ class Maze(filePath: URI) {
 
     val fieldMap: Map[Coord, Square] =
     fieldArray.zipWithIndex.flatMap{ case (li, idxli) =>
-      li.zipWithIndex.map { case (sq, idxCol) => (Coord(idxli, idxCol) -> sq) }
+      li.zipWithIndex.map { case (sq, idxCol) => Coord(idxli, idxCol) -> sq }
     }.toMap
 
-    val boxes = (for (li <- fieldArray.indices; col <- fieldArray(li).indices if fieldArray(li)(col).sqType == SquareType.Box)
-      yield Coord(li, col)).toSet
-
-    GameState(new Field(fieldMap), pos, boxes)
-  }
-
-  private def getGoals: Set[Coord] = {
-    (for (li <- field.toSet if li._2.sqType == SquareType.Goal || li._2.sqType == SquareType.BoxPlaced)
-      yield li._1)
+    GameState(new Field(fieldMap), pos)
   }
 
   private def drawField(): Unit = {
@@ -168,7 +176,9 @@ class Maze(filePath: URI) {
   }
 }
 
-case class GameState(var field: Field, var playerPos: Coord, var posBoxes: Set[Coord])
+case class GameState(var field: Field, var playerPos: Coord){
+  def posBoxes: Set[Coord] = field.getBoxes
+}
 
 
 

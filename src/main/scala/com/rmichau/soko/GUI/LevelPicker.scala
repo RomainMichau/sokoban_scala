@@ -4,6 +4,7 @@ package com.rmichau.soko.GUI
 import java.io.File
 import java.net.URI
 
+import com.rmichau.soko.util.Util
 import javafx.event.{ActionEvent, EventHandler}
 import javafx.stage.Stage
 import scalafx.collections.ObservableBuffer
@@ -11,16 +12,12 @@ import scalafx.scene.Scene
 import scalafx.scene.control.{Button, ComboBox, Label}
 import scalafx.scene.layout.GridPane
 
-class LevelPicker {
+object LevelPicker {
 
-    def recursiveListFiles(f: File): Array[File] = {
-    val these = f.listFiles
-    these ++ these.filter(_.isDirectory).flatMap(recursiveListFiles)
-  }
 
   val dialogStage = new Stage()
   var res: URI = null
-  val files: ObservableBuffer[File]= ObservableBuffer(this.recursiveListFiles(new File("levels"))
+  val files: ObservableBuffer[File]= ObservableBuffer(Util.recursiveListFiles(new File("levels"))
     .filter(_.isFile).toList)
 
   def pickLevel = {

@@ -3,7 +3,6 @@ import java.net.URI
 
 import com.rmichau.soko.GUI.{LevelPicker, SokoGui}
 import com.rmichau.soko.Maze.Maze
-import com.rmichau.soko.Solver.Deadlocks
 import scalafx.application.JFXApp
 
 object SokobanSolverLauncher {
@@ -14,7 +13,7 @@ object SokobanSolverLauncher {
 
 
 class SokobanSolver(levelFromArgument: Option[String]) extends JFXApp {
-  val levelPicker = new LevelPicker
+  val levelPicker: LevelPicker.type = LevelPicker
 
   val lvl: URI = if (levelFromArgument.isDefined)
     new URI(levelFromArgument.get)

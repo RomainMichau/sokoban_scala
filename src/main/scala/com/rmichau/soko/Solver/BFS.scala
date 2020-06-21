@@ -1,12 +1,14 @@
 package com.rmichau.soko.Solver
 
 
-import scala.collection.mutable
+import com.rmichau.soko.Solver.Node.BFSNode
+
+import scala.collection.{immutable, mutable}
 
 
 object BFS {
 
-
+case class BFSResult[U <: BFSNode[U]](finalNode: Option[U], visitedNode: Set[U])
 
   /**
    * Do a bfs to fin a BFSNode marked as goal from the node sent in parameters
@@ -14,28 +16,31 @@ object BFS {
    * @return return the Fist node marked as a bfs goal. Path to this node can be get with node.getPathToNode
    *         If no goalNode is reachable None in returned
    */
-  def doBFS(node: BFSNode, queue: BfsQueue[BFSNode]):Option[BFSNode] = {
+  def doBFS[U <: BFSNode[U]](node: U, queue: BfsQueue[U], isGoalNode: U => Boolean):BFSResult[U] = {
     if(queue.nonEmpty)
       throw new Exception("queue must be empty")
+    val t0 = System.currentTimeMillis()
     queue.enqueue(node)
-    val visitedNode: mutable.Set[BFSNode] = mutable.Set(node)
+    var visitedNode: Set[U] = Set(node)
     var won = false
-    var finalNode: Option[BFSNode] = None
+    var finalNode: Option[U] = None
     while(queue.nonEmpty){
       val cuNode = queue.dequeue()
-      cuNode.getNeighbourNode.foreach{ node =>
+      cuNode.getConnectedNode.foreach{ node =>
         if(!won){
-          if(node.isGoalNode) {
+          if(isGoalNode(node)) {
             won = true
             finalNode = Some(node)
           } else if(!visitedNode(node)){
             queue.enqueue(node)
-            visitedNode += node
+            visitedNode = visitedNode + node
           }
         }
       }
     }
-    finalNode
+    val t1 = System.currentTimeMillis()
+    println("BFS Elapsed time: " + (t1 - t0) + "ms")
+    BFSResult(finalNode, visitedNode)
   }
 }
 
