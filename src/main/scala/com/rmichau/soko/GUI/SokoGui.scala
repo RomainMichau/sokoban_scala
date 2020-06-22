@@ -2,8 +2,12 @@ package com.rmichau.soko.GUI
 
 import com.rmichau.soko.Maze.SquareType.SquareType
 import com.rmichau.soko.Maze._
+import com.rmichau.soko.Solver.Node.PushBoxNode
+import javafx.animation.{KeyFrame, Timeline}
 import javafx.beans.property.SimpleObjectProperty
+import javafx.event.{ActionEvent, EventHandler}
 import javafx.scene.control.Tooltip
+import javafx.util.Duration
 import scalafx.Includes._
 import scalafx.beans.property.ObjectProperty
 import scalafx.scene.Scene
@@ -42,9 +46,10 @@ class SokoGui(maze: Maze) {
       this.movePlayer(LEFT)
     if (KeyCode.Right.getCode == key.getCode.getCode)
       this.movePlayer(RIGHT)
-    if (KeyCode.Escape.getCode == key.getCode.getCode)
+    if (KeyCode.Escape.getCode == key.getCode.getCode) {
       maze.reinitGame()
-    refreshGrid()
+      refreshGrid()
+    }
   }
 
   private def field = maze.getGameState.field
@@ -58,6 +63,21 @@ class SokoGui(maze: Maze) {
       content = grid
     }
     SokoStage.setScene(scene)
+  }
+
+  def drawMove(node: PushBoxNode) = {
+    val dirs = node.getPathToNode.flatMap(_.dir).toList :+ node.dir.get
+    val timeline = new Timeline(new KeyFrame(Duration.millis(100), new EventHandler[ActionEvent](){
+      var i = 0
+      override def handle(t: ActionEvent): Unit = {
+        movePlayer(dirs(i))
+        refreshGrid()
+        i = i+1
+
+      }
+    }))
+    timeline.setCycleCount(dirs.size)
+    timeline.play()
   }
 
   private def refreshGrid(): Unit = {
@@ -102,13 +122,15 @@ class SokoGui(maze: Maze) {
   }
 
   private def movePlayer(direction: Direction) = {
-    if (maze.movePlayer(direction)) {
+ val won = maze.movePlayer(direction)
+    refreshGrid()
+   /* if (won) {
       import javafx.scene.control.Alert.AlertType
       new Alert(AlertType.INFORMATION) {
         title = "You won!!!"
         headerText = "You won!!!"
         contentText = "You won!!!"
       }.showAndWait()
-    }
+    }*/
   }
 }

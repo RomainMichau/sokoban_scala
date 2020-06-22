@@ -7,7 +7,8 @@ import scala.util.hashing.MurmurHash3
 
 
 case class PushBoxNode(state: PushBoxNodeState,
-                       parentNode: Option[PushBoxNode]) extends BFSNode[PushBoxNode]{
+                       dir: Option[Direction]= None,
+                       parentNode: Option[PushBoxNode] = None) extends BFSNode[PushBoxNode]{
 
   val field: Field = state.field
   val pos: Coord = state.pos
@@ -16,12 +17,12 @@ case class PushBoxNode(state: PushBoxNodeState,
     val conNode = Direction.values.flatMap { dir =>
       val newSq = field(pos.getCoordAfterMove(dir))
       val res = if (newSq.isWalkable) {
-        Some(PushBoxNode(PushBoxNodeState(field, newSq.coord), Some(this)))
+        Some(PushBoxNode(PushBoxNodeState(field, newSq.coord),Some(dir) ,Some(this)))
       }
       else if (newSq.isABox) {
         val newBoxSq = field(newSq.coord.getCoordAfterMove(dir))
         if (newBoxSq.isWalkable && newBoxSq.sqType != SquareType.Deadlock) {
-          Some(PushBoxNode(PushBoxNodeState(field.getFieldAfterPushBox(newSq.coord, dir), newSq.coord), Some(this)))
+          Some(PushBoxNode(PushBoxNodeState(field.getFieldAfterPushBox(newSq.coord, dir), newSq.coord), Some(dir), Some(this)))
         }
         else None
       }
