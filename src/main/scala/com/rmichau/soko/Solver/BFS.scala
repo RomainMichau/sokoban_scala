@@ -35,6 +35,7 @@ object BFS {
             won = true
             finalNode = Some(node)
           } else if (!visitedNode(node)) {
+     //       node.draw()
             queue.enqueue(node)
             visitedNode = visitedNode + node
           }

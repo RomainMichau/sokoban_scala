@@ -4,26 +4,25 @@ import com.rmichau.soko.Maze.SquareType.SquareType
 
 
 
-class Field(private var field: Map[Coord, Square]){
-  private var boxes = field.filter(v => v._2.isABox).keySet
-  val goals: Set[Coord] = field.filter(v => v._2.isAGoal).keySet
+class Field(private val field: Map[Coord, Square],
+            val boxesOpt: Option[Set[Coord]]= None,
+            val goalsOpt: Option[Set[Coord]]= None){
+  val boxes: Set[Coord] = boxesOpt.getOrElse(field.filter(v => v._2.isABox).keySet)
+  val goals: Set[Coord] = goalsOpt.getOrElse(field.filter(v => v._2.isAGoal).keySet)
 
   def getBoxes: Set[Coord] = boxes
   def apply(coord: Coord): Square = field(coord)
-  def +=(square: Square): Unit = field = field + (square.coord -> square)
+  def +(square: Square): Field = new Field(field + (square.coord -> square), Some(boxes), Some(goals))
   def toSet: Set[(Coord, Square)] = field.toSet
 
-  def getFieldAfterPushBox(coord: Coord, direction: Direction): Field = {
-    new Field(moveBox(coord, direction))
-  }
-
-  def pushBox(coord: Coord, direction: Direction): Unit = {
-    field = moveBox(coord, direction)
+  def pushBox(coord: Coord, direction: Direction): Field = {
+    val res = moveBox(coord, direction)
+    new Field(res._1, Some(res._2), Some(goals))
   }
 
   def getAllSquares: Iterable[Square] = field.values
 
-  private def moveBox(coord: Coord, direction: Direction): Map[Coord, Square] = {
+  private def moveBox(coord: Coord, direction: Direction):(Map[Coord, Square], Set[Coord]) = {
     val boxSq = field(coord)
     if(!boxSq.isABox){
       throw new Exception(s"no box on ${coord.toString}")
@@ -46,11 +45,40 @@ class Field(private var field: Map[Coord, Square]){
     else {
       Square.box(destSq.coord)
     }
-    boxes = boxes - (oldSq.coord) + (destSq.coord)
-    field + (oldSq.coord -> oldSq, newSq.coord -> newSq)
+    val newBoxes = boxes - (oldSq.coord) + (destSq.coord)
+    (field + (oldSq.coord -> oldSq, newSq.coord -> newSq), newBoxes)
   }
 
+  def drawField(posPlayer: Option[Coord] = None): Unit = {
+    def getColor(square: Square): String = {
+      square.sqType match {
+        case SquareType.Box | SquareType.BoxPlaced => Console.BLUE
+        case SquareType.Wall => Console.MAGENTA
+        case SquareType.Goal => Console.GREEN
+        case SquareType.Deadlock => Console.RED
+        case SquareType.Ground => Console.WHITE
+      }
+    }
 
+    // Print col index
+    print("   ")
+    (0 until Maze.getNbCol).foreach { nb =>
+      print(s"$nb ")
+      if (nb < 10) print(" ")
+    }
+    println()
+
+    for (lig <- 0 until Maze.getNbLig) {
+      print(lig + "  ")
+      for (col <- 0 until Maze.getNbCol) {
+        val sq = this.field(Coord(lig, col))
+        if (Coord(lig, col) != posPlayer.getOrElse(None))
+          print(getColor(sq) + sq.sym + "  ")
+        else print(Console.YELLOW + 5 + "  ")
+      }
+      println()
+    }
+  }
 
 }
 

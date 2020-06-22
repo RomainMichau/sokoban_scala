@@ -14,6 +14,9 @@ object SokobanSolverLauncher {
 
 
 class SokobanSolver(levelFromArgument: Option[String]) extends JFXApp {
+
+
+
   val levelPicker: LevelPicker.type = LevelPicker
 
   val lvl: URI = if (levelFromArgument.isDefined)

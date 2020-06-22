@@ -9,6 +9,8 @@ trait BFSNode[U <: BFSNode[U]] {
       case None => Vector()
     }
   }
+  // Draw node on console (use to debug)
+  def draw(): Unit
 }
 
 trait BFSEdge[U <: BFSNode[U]] {

@@ -19,7 +19,7 @@ object Maze {
 class Maze(filePath: URI) {
   // if you use intelliJ you need to configure the resource file in the project struct
   // see: https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000168244/comments/115000201030
-  private var currentGameState = loadLevelFromFile(filePath)
+  private var currentGameState: GameState = loadLevelFromFile(filePath)
 
   def field: Field = currentGameState.field
 
@@ -83,7 +83,7 @@ class Maze(filePath: URI) {
 
   private def detectStaticDeadlocks(): Unit = {
     println("=====DETECTING STATIC DEADLOCKS======")
-    Deadlocks.detectStaticDeadLocks(field).foreach(sq => field += Square.deadSquare(sq.coord))
+    Deadlocks.detectStaticDeadLocks(field).foreach(sq => currentGameState.field = (field + Square.deadSquare(sq.coord)) )
     println("=====DETECTING STATIC DEADLOCKS DONE======")
 
   }
@@ -94,7 +94,7 @@ class Maze(filePath: URI) {
 
   private def pushBox(boxCoord: Coord, direction: Direction): Boolean = {
     canPushBox(boxCoord, direction).exists { dest =>
-      field.pushBox(boxCoord, direction)
+      currentGameState.field = field.pushBox(boxCoord, direction)
       true
     }
   }
@@ -144,35 +144,7 @@ class Maze(filePath: URI) {
   }
 
   private def drawField(): Unit = {
-
-    def getColor(square: Square): String = {
-      square.sqType match {
-        case SquareType.Box | SquareType.BoxPlaced => Console.BLUE
-        case SquareType.Wall => Console.MAGENTA
-        case SquareType.Goal => Console.GREEN
-        case SquareType.Deadlock => Console.RED
-        case SquareType.Ground => Console.WHITE
-      }
-    }
-
-    // Print col index
-    print("   ")
-    (0 until this.nbCol).foreach { nb =>
-      print(s"$nb ")
-      if (nb < 10) print(" ")
-    }
-    println()
-
-    for (lig <- 0 until this.nbLig) {
-      print(lig + "  ")
-      for (col <- 0 until this.nbCol) {
-        val sq = this.field(Coord(lig, col))
-        if (Coord(lig, col) != posPlayer)
-          print(getColor(sq) + sq.sym + "  ")
-        else print(Console.YELLOW + 5 + "  ")
-      }
-      println()
-    }
+    field.drawField(Some(posPlayer))
   }
 }
 

@@ -22,7 +22,7 @@ case class PushBoxNode(state: PushBoxNodeState,
       else if (newSq.isABox) {
         val newBoxSq = field(newSq.coord.getCoordAfterMove(dir))
         if (newBoxSq.isWalkable && newBoxSq.sqType != SquareType.Deadlock) {
-          Some(PushBoxNode(PushBoxNodeState(field.getFieldAfterPushBox(newSq.coord, dir), newSq.coord), Some(dir), Some(this)))
+          Some(PushBoxNode(PushBoxNodeState(field.pushBox(newSq.coord, dir), newSq.coord), Some(dir), Some(this)))
         }
         else None
       }
@@ -38,6 +38,8 @@ case class PushBoxNode(state: PushBoxNodeState,
   }
 
   override def hashCode(): Int = state.hashCode()
+
+  override def draw(): Unit = field.drawField(Some(pos))
 }
 
 case class PushBoxNodeState(field: Field, pos: Coord) {
