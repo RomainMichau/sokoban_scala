@@ -11,7 +11,6 @@ import javafx.util.Duration
 import scalafx.Includes._
 import scalafx.beans.property.ObjectProperty
 import scalafx.scene.Scene
-import scalafx.scene.control.Alert
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.input.{KeyCode, KeyEvent}
 import scalafx.scene.layout.GridPane
@@ -64,10 +63,10 @@ class SokoGui(maze: Maze) {
     }
     SokoStage.setScene(scene)
   }
-
+/*
   def drawMove(node: PushBoxNode) = {
     val dirs = node.getPathToNode.flatMap(_.dir).toList :+ node.dir.get
-    val timeline = new Timeline(new KeyFrame(Duration.millis(100), new EventHandler[ActionEvent](){
+    val timeline = new Timeline(new KeyFrame(Duration.millis(50), new EventHandler[ActionEvent](){
       var i = 0
       override def handle(t: ActionEvent): Unit = {
         movePlayer(dirs(i))
@@ -79,7 +78,7 @@ class SokoGui(maze: Maze) {
     timeline.setCycleCount(dirs.size)
     timeline.play()
   }
-
+*/
   private def refreshGrid(): Unit = {
     (0 until Maze.getNbLig).indices.foreach { lig =>
       (0 until Maze.getNbCol).map { col =>

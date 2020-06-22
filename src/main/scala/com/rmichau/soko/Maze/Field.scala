@@ -14,6 +14,7 @@ class Field(private val field: Map[Coord, Square],
   def apply(coord: Coord): Square = field(coord)
   def +(square: Square): Field = new Field(field + (square.coord -> square), Some(boxes), Some(goals))
   def toSet: Set[(Coord, Square)] = field.toSet
+  def toMap: Map[Coord, Square] = field
 
   def pushBox(coord: Coord, direction: Direction): Field = {
     val res = moveBox(coord, direction)

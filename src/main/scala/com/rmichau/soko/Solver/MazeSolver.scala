@@ -14,9 +14,10 @@ class MazeSolver(maze: Maze) {
   }
 
   def solveMaze(): BFS.BFSResult[PushBoxNode] = {
-    val node: PushBoxNode = PushBoxNode(PushBoxNodeState(maze.field,maze.posPlayer))
+    val node: PushBoxNode = PushBoxNode(PushBoxNodeState(maze.field,AccessibleZone(maze.field, maze.posPlayer)), parentNode = None, moveToArrivedAtThisNode = None)
     BFS.doBFS(node,
       new BfsPriorityQueue[PushBoxNode](Ordering.by(diff)),
-      (node: PushBoxNode) => node.field.getBoxes == node.field.goals)
+      (node: PushBoxNode) => node.field.getBoxes == node.field.goals,
+      disp = true)
   }
 }

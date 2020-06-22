@@ -4,14 +4,6 @@ import com.rmichau.soko.Maze.{Coord, Field, Maze, SquareType}
 import com.rmichau.soko.Solver.Node.{MoveNode, MoveNodeState}
 
 object SolverHelper {
-  def detectZoneAccessible(field: Field, pos: Coord): Set[Coord] = {
-    BFS.doBFS(
-      MoveNode.getFieldNodeAsAPlayerWhoCantPushBox(MoveNodeState(field, pos)),
-      new BfsPlainQueue[MoveNode],
-      (_: MoveNode) => false)
-      .visitedNode
-      .map(_.nodeState.pos)
-  }
 
   def getDistMap(field: Field): Map[Coord, Int] = {
     val map = field.getAllSquares.filter(_.sqType != SquareType.Wall).map { sq =>

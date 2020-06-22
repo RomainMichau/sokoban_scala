@@ -14,6 +14,26 @@ case class Coord(lig: Int, col: Int){
     }
   }
 
+  /**
+   * Return the direction to go the the coord
+   * @param coord MUST BE ADJACENT (Sinon exception !!!)
+   */
+  def moveToGoToCoord(coord: Coord): Move = {
+    val lamdaLig = coord.lig - lig
+    val lambdaCol = coord.col - col
+    val dir = if(lamdaLig == 1)
+       DOWN
+    else if (lamdaLig == -1)
+      UP
+    else if (lambdaCol == -1)
+      LEFT
+    else if (lambdaCol == 1)
+      RIGHT
+    else
+      throw new Exception(s"${coord.toString} and $toString are not adjacent")
+    Move(this, dir)
+  }
+
   lazy val isInField: Boolean = {
     lig >= 0 && lig < Maze.getNbLig && col >= 0 && col < Maze.getNbCol
   }
@@ -70,4 +90,6 @@ case object RIGHT extends Direction {
 case class Move(initialCoord: Coord, direction: Direction){
   lazy val arrivalCoord: Coord = this.initialCoord.getCoordAfterMove(direction)
   lazy val getOppositeMoveCoord: Coord = this.initialCoord.getCoordAfterMove(direction.getOpposite)
+
+  override def toString: String = s"${initialCoord.toString}  $direction"
 }

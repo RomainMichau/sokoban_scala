@@ -17,7 +17,7 @@ object BFS {
    * @return return the Fist node marked as a bfs goal. Path to this node can be get with node.getPathToNode
    *         If no goalNode is reachable None in returned
    */
-  def doBFS[U <: BFSNode[U]](node: U, queue: BfsQueue[U], isGoalNode: U => Boolean): BFSResult[U] = {
+  def doBFS[U <: BFSNode[U]](node: U, queue: BfsQueue[U], isGoalNode: U => Boolean, disp: Boolean = false): BFSResult[U] = {
     if (queue.nonEmpty)
       throw new Exception("queue must be empty")
     val t0 = System.currentTimeMillis()
@@ -43,9 +43,11 @@ object BFS {
       }
     }
     val t1 = System.currentTimeMillis()
-    println(s"solution found $won")
-    println("BFS Elapsed time: " + (t1 - t0) + "ms")
-    println(s"Nove visited: ${visitedNode.size}")
+    if(disp) {
+      println(s"solution found $won")
+      println("BFS Elapsed time: " + (t1 - t0) + "ms")
+      println(s"Nove visited: ${visitedNode.size}")
+    }
     BFSResult(finalNode, visitedNode)
   }
 }

@@ -3,7 +3,7 @@ import java.net.URI
 
 import com.rmichau.soko.GUI.{LevelPicker, SokoGui}
 import com.rmichau.soko.Maze.Maze
-import com.rmichau.soko.Solver.{MazeSolver, SolverHelper}
+import com.rmichau.soko.Solver.{AccessibleZone, MazeSolver, SolverHelper}
 import scalafx.application.JFXApp
 
 object SokobanSolverLauncher {
@@ -25,10 +25,11 @@ class SokobanSolver(levelFromArgument: Option[String]) extends JFXApp {
     levelPicker.pickLevel
 
   val maze = new Maze(lvl)
-  val map = SolverHelper.getDistMap(maze.field)
+  val dist = SolverHelper.getDistMap(maze.field)
+  val access: AccessibleZone = AccessibleZone(maze.field, maze.posPlayer)
   val res = new MazeSolver(maze).solveMaze()
   val gui = new SokoGui(maze)
   gui.stage()
-  gui.drawMove(res.finalNode.get)
+  //gui.drawMove(res.finalNode.get)
 }
 
