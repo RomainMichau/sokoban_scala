@@ -3,8 +3,9 @@ package com.rmichau.soko.Solver.Node
 import com.rmichau.soko.Maze.{Coord, Direction, Field, GameState, Move, Square, SquareType}
 
 object MoveNode {
-  def getMoveNodeAsABoxInAnEmptyField(nodeState: MoveNodeState) = new MoveNode(nodeState, None, moveAsABoxInAnEmptyField)
-  def getFieldNodeAsAPlayerWhoCantPushBox(nodeState: MoveNodeState) = new MoveNode(nodeState, None, moveAsAPlayerWhoCannotPushBox)
+  def getMoveNodeAsABoxInAnEmptyField(nodeState: MoveNodeState) = new MoveNode(nodeState, None,  moveAsABoxInAnEmptyField)
+  def getMoveNodeAsAPlayerWhoCantPushBox(nodeState: MoveNodeState) = new MoveNode(nodeState, None, moveAsAPlayerWhoCannotPushBox)
+  def getMoveNodeAsAPlayerInAmEmptyField(nodeState: MoveNodeState) = new MoveNode(nodeState, None, moveAsAPlayerInAnEmptyField)
 
   private def moveAsABoxInAnEmptyField(moveEdge: PotentialMoveEdge): Option[MoveNodeState] = {
     val field = moveEdge.field
@@ -27,6 +28,16 @@ object MoveNode {
     else
       None
   }
+
+  private def moveAsAPlayerInAnEmptyField(moveEdge: PotentialMoveEdge): Option[MoveNodeState] = {
+    val coordAfterMove = moveEdge.move.arrivalCoord
+    val isMoveOk = coordAfterMove.isInField && moveEdge.field(coordAfterMove).sqType != SquareType.Wall
+    if (isMoveOk) {
+      Some(MoveNodeState(moveEdge.field, coordAfterMove))
+    }
+    else
+      None
+  }
 }
 
 /**
@@ -35,17 +46,22 @@ object MoveNode {
  * This type of node consider that all the non-wall node are grounds
  *
  * @param nodeState
- * @param parentNode
  * @param isAconnectedNode
  */
 case class MoveNode(nodeState: MoveNodeState,
-                    parentNode: Option[MoveNode],
+                    incomingEdge: Option[EdgeMove],
                     isAconnectedNode: PotentialMoveEdge => Option[MoveNodeState]) extends BFSNode[MoveNode] {
   implicit private val field: Field = nodeState.field
   private val pos = nodeState.pos
 
-  override def getConnectedNode: Set[MoveNode] = Direction.values.flatMap(dir => isAconnectedNode(new PotentialMoveEdge(Move(pos, dir), field)))
-    .map(state => MoveNode(state, Some(this), isAconnectedNode))
+  override def getConnectedNode: Set[MoveNode] = Direction.values.flatMap{ dir =>
+    val move = Move(pos, dir)
+    isAconnectedNode(new PotentialMoveEdge(move, field)).map{
+      state => MoveNode(state,  Some(EdgeMove(move, this)), isAconnectedNode)
+    }
+  }
+
+  def getIncommingEdge:EdgeMove = incomingEdge.getOrElse(throw new Exception(s"node $toString does not have an incoming edge"))
 
   override def toString: String = pos.toString
 
@@ -63,11 +79,9 @@ case class MoveNode(nodeState: MoveNodeState,
 
 class PotentialMoveEdge(val move: Move, val field: Field)
 
-case class EdgeMove(override val move: Move,
-                    override val field: Field,
-                    node1: MoveNode,
-                    node2: MoveNode
-                   ) extends PotentialMoveEdge(move, field) with BFSEdge[MoveNode]
+case class EdgeMove(move: Move,
+                    override val parentNode: MoveNode
+                   ) extends BFSIncomingEdge[MoveNode]
 
 
 case class MoveNodeState(field: Field, pos: Coord) {

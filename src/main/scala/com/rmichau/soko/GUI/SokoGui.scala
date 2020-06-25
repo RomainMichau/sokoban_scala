@@ -2,6 +2,7 @@ package com.rmichau.soko.GUI
 
 import com.rmichau.soko.Maze.SquareType.SquareType
 import com.rmichau.soko.Maze._
+import com.rmichau.soko.Solver.BFS
 import com.rmichau.soko.Solver.Node.PushBoxNode
 import javafx.animation.{KeyFrame, Timeline}
 import javafx.beans.property.SimpleObjectProperty
@@ -63,22 +64,21 @@ class SokoGui(maze: Maze) {
     }
     SokoStage.setScene(scene)
   }
-/*
-  def drawMove(node: PushBoxNode) = {
-    val dirs = node.getPathToNode.flatMap(_.dir).toList :+ node.dir.get
+
+  def drawMove(dirs: Vector[Direction]): Unit = {
     val timeline = new Timeline(new KeyFrame(Duration.millis(50), new EventHandler[ActionEvent](){
       var i = 0
       override def handle(t: ActionEvent): Unit = {
         movePlayer(dirs(i))
         refreshGrid()
         i = i+1
-
       }
     }))
     timeline.setCycleCount(dirs.size)
     timeline.play()
-  }
-*/
+    }
+
+
   private def refreshGrid(): Unit = {
     (0 until Maze.getNbLig).indices.foreach { lig =>
       (0 until Maze.getNbCol).map { col =>

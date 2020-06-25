@@ -2,8 +2,9 @@
 import java.net.URI
 
 import com.rmichau.soko.GUI.{LevelPicker, SokoGui}
-import com.rmichau.soko.Maze.Maze
-import com.rmichau.soko.Solver.{AccessibleZone, MazeSolver, SolverHelper}
+import com.rmichau.soko.Maze.{Coord, Maze, Move}
+import com.rmichau.soko.Solver.Node.PushBoxNode
+import com.rmichau.soko.Solver.{AccessibleZone, BFS, MazeSolver, SolverHelper}
 import scalafx.application.JFXApp
 
 object SokobanSolverLauncher {
@@ -27,9 +28,11 @@ class SokobanSolver(levelFromArgument: Option[String]) extends JFXApp {
   val maze = new Maze(lvl)
   val dist = SolverHelper.getDistMap(maze.field)
   val access: AccessibleZone = AccessibleZone(maze.field, maze.posPlayer)
-  val res = new MazeSolver(maze).solveMaze()
+  val res: BFS.BFSResult[PushBoxNode] = new MazeSolver(maze).solveMaze()
+  //val dirs = res.finalNode.get.toDirs()
+  val dirs: Option[Vector[Move]] = SolverHelper.getPathAsAPlayerCannotPushBox(Coord(4,4), Coord(1,1), maze.field)
   val gui = new SokoGui(maze)
   gui.stage()
-  //gui.drawMove(res.finalNode.get)
+  gui.drawMove(res.finalNode.get.toDirs())
 }
 

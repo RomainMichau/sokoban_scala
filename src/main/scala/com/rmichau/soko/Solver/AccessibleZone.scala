@@ -6,7 +6,7 @@ import com.rmichau.soko.Solver.Node.{MoveNode, MoveNodeState}
 object AccessibleZone{
   def apply(field: Field, pos: Coord): AccessibleZone = {
     val accessibleCoord: Set[Coord] = BFS.doBFS(
-      MoveNode.getFieldNodeAsAPlayerWhoCantPushBox(MoveNodeState(field, pos)),
+      MoveNode.getMoveNodeAsAPlayerWhoCantPushBox(MoveNodeState(field, pos)),
       new BfsPlainQueue[MoveNode],
       (_: MoveNode) => false)
       .visitedNode

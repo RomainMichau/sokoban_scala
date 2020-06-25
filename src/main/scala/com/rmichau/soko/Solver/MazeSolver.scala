@@ -1,6 +1,6 @@
 package com.rmichau.soko.Solver
 
-import com.rmichau.soko.Maze.{Coord, Field, Maze}
+import com.rmichau.soko.Maze.Maze
 import com.rmichau.soko.Solver.Node.{PushBoxNode, PushBoxNodeState}
 
 class MazeSolver(maze: Maze) {
@@ -14,7 +14,7 @@ class MazeSolver(maze: Maze) {
   }
 
   def solveMaze(): BFS.BFSResult[PushBoxNode] = {
-    val node: PushBoxNode = PushBoxNode(PushBoxNodeState(maze.field,AccessibleZone(maze.field, maze.posPlayer)), parentNode = None, moveToArrivedAtThisNode = None)
+    val node: PushBoxNode = PushBoxNode(PushBoxNodeState(maze.field,AccessibleZone(maze.field, maze.posPlayer)), maze.posPlayer)
     BFS.doBFS(node,
       new BfsPriorityQueue[PushBoxNode](Ordering.by(diff)),
       (node: PushBoxNode) => node.field.getBoxes == node.field.goals,
