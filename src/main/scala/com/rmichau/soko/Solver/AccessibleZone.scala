@@ -11,13 +11,9 @@ object AccessibleZone{
       (_: MoveNode) => false)
       .visitedNode
       .map(_.nodeState.pos)
-    val accessibleBoxes: Set[Move] = accessibleCoord.flatMap{coord =>
-      coord.adjacentSq.flatMap{adjCoord =>
-        if(field(adjCoord).isABox)
-          Some(coord.moveToGoToCoord(adjCoord))
-        else None
+    val accessibleBoxes: Set[Move] = field.boxes.flatMap{coord =>
+      coord.adjacentSq.filter(accessibleCoord(_)).map(adjCoord => adjCoord.moveToGoToCoord(coord))
       }
-    }
     AccessibleZone(accessibleCoord, accessibleBoxes)
   }
 }
