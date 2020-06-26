@@ -10,7 +10,7 @@ class MazeSolver(maze: Maze) {
     val field = node.field
     val boxPlaced = field.getBoxes.intersect(field.goals)
     val dist = node.field.getBoxes.map(box => distMap(box)).sum
-    boxPlaced.size
+    -dist
   }
 
   def solveMaze(): BFS.BFSResult[PushBoxNode] = {

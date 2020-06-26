@@ -21,8 +21,7 @@ object MoveNode {
 
   private def moveAsAPlayerWhoCannotPushBox(moveEdge: PotentialMoveEdge): Option[MoveNodeState] = {
     val coordAfterMove = moveEdge.move.arrivalCoord
-    val isMoveOk = coordAfterMove.isInField && moveEdge.field(coordAfterMove).isWalkable
-    if (isMoveOk) {
+    if (coordAfterMove.isInField && moveEdge.field(coordAfterMove).isWalkable) {
       Some(MoveNodeState(moveEdge.field, coordAfterMove))
     }
     else

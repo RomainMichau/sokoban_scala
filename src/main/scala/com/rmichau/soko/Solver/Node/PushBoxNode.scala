@@ -32,7 +32,7 @@ case class PushBoxNode private(state: PushBoxNodeState,
     this.state.accessibleZone.potentialPushBoxes.flatMap{ move =>
       val boxPos = move.arrivalCoord
       val newBoxPos = boxPos.getCoordAfterMove(move.direction)
-      if(field(newBoxPos).isWalkable){
+      if(field(newBoxPos).isWalkable && field(newBoxPos).sqType != SquareType.Deadlock){
         val newField = field.pushBox(boxPos, move.direction)
         Some(PushBoxNode(PushBoxNodeState(newField, AccessibleZone(newField, boxPos)), Some(PushBoxEdge(this, move))))
       }
@@ -40,7 +40,7 @@ case class PushBoxNode private(state: PushBoxNodeState,
     }
   }
 
-  def toDirs(): immutable.Vector[Direction] = {
+  def toDirs: immutable.Vector[Direction] = {
     (this.getPathToNode.drop(1) :+ this).flatMap{ node =>
       SolverHelper.getPathAsAPlayerCannotPushBox(node.parentNode.get.currentPos, node.incomingEdge.get.incommingMove.initialCoord, node.parentNode.get.field)
         .map(_ :+ node.incomingEdge.get.incommingMove)
