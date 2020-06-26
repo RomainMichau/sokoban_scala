@@ -2,6 +2,7 @@ package com.rmichau.soko.Solver
 
 
 import com.rmichau.soko.Solver.Node.BFSNode
+import com.rmichau.soko.util.Util
 
 import scala.collection.{immutable, mutable}
 
@@ -20,7 +21,7 @@ object BFS {
   def doBFS[U <: BFSNode[U]](node: U, queue: BfsQueue[U], isGoalNode: U => Boolean, disp: Boolean = false): BFSResult[U] = {
     if (queue.nonEmpty)
       throw new Exception("queue must be empty")
-    val t0 = System.currentTimeMillis()
+    val chrono = Util.Chrono()
     queue.enqueue(node)
     var visitedNode: Set[U] = Set(node)
     var won = isGoalNode(node)
@@ -45,7 +46,7 @@ object BFS {
     val t1 = System.currentTimeMillis()
     if(disp) {
       println(s"solution found $won")
-      println("BFS Elapsed time: " + (t1 - t0) + "ms")
+      println("BFS Elapsed time: " + (chrono.currentTime) + "ms")
       println(s"Nove visited: ${visitedNode.size}")
     }
     BFSResult(finalNode, visitedNode)
