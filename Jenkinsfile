@@ -20,6 +20,13 @@ pipeline {
             }
         }
 
+        stage('Lint') {
+            steps {
+                echo "Testing..."
+                sh "/usr/local/bin/sbt scalastyle"
+            }
+        }
+
         stage('Package') {
             steps {
                 echo "Packaging..."
