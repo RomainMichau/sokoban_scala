@@ -72,9 +72,8 @@ case class PushBoxNodeState(field: Field, accessibleZone: AccessibleZone) {
   }
 
   override def hashCode(): Int = {
-    val hashField = MurmurHash3.mapHash(field.toMap)
-    val hashZone = MurmurHash3.setHash(accessibleZone.accessibleCoord)
-    MurmurHash3.listHash(List(hashField, hashZone), 0)
+    val hashField = MurmurHash3.setHash(field.getBoxes)
+    MurmurHash3.listHash(List(hashField, accessibleZone.nPos), 0)
   }
 }
 
