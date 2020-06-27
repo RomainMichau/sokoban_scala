@@ -13,7 +13,7 @@ object SokoStage {
     title = "sokoSolve"
     icons.add(new Image(ressourcePath))
   }
-  def setScene(scene: Scene) = stage.scene = scene
+  def setScene(scene: Scene): Unit = stage.scene = scene
   val imgPath = getClass.getResource("/img/").toString
 
 }

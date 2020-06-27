@@ -3,20 +3,22 @@ package com.rmichau.soko.Solver.Node
 import com.rmichau.soko.Maze.{Coord, Direction, Field, GameState, Move, Square, SquareType}
 
 object MoveNode {
-  def getMoveNodeAsABoxInAnEmptyField(nodeState: MoveNodeState) = new MoveNode(nodeState, None,  moveAsABoxInAnEmptyField)
-  def getMoveNodeAsAPlayerWhoCantPushBox(nodeState: MoveNodeState) = new MoveNode(nodeState, None, moveAsAPlayerWhoCannotPushBox)
-  def getMoveNodeAsAPlayerInAmEmptyField(nodeState: MoveNodeState) = new MoveNode(nodeState, None, moveAsAPlayerInAnEmptyField)
+  def getMoveNodeAsABoxInAnEmptyField(nodeState: MoveNodeState): MoveNode = new MoveNode(nodeState, None,  moveAsABoxInAnEmptyField)
+  def getMoveNodeAsAPlayerWhoCantPushBox(nodeState: MoveNodeState): MoveNode = new MoveNode(nodeState, None, moveAsAPlayerWhoCannotPushBox)
+  def getMoveNodeAsAPlayerInAmEmptyField(nodeState: MoveNodeState): MoveNode = new MoveNode(nodeState, None, moveAsAPlayerInAnEmptyField)
 
   private def moveAsABoxInAnEmptyField(moveEdge: PotentialMoveEdge): Option[MoveNodeState] = {
     val field = moveEdge.field
     val coordAfterMove = moveEdge.move.arrivalCoord
     val coordPlayer = moveEdge.move.getOppositeMoveCoord
-    val isMoveOk = coordAfterMove.isInField && coordPlayer.isInField && field(coordAfterMove).sqType != SquareType.Wall && field(coordPlayer).sqType != SquareType.Wall
+    val isMoveOk = coordAfterMove.isInField && coordPlayer.isInField && field(coordAfterMove).sqType !=
+      SquareType.Wall && field(coordPlayer).sqType != SquareType.Wall
     if (isMoveOk) {
       Some(MoveNodeState(field, coordAfterMove))
     }
-    else
+    else {
       None
+    }
   }
 
   private def moveAsAPlayerWhoCannotPushBox(moveEdge: PotentialMoveEdge): Option[MoveNodeState] = {
@@ -24,8 +26,9 @@ object MoveNode {
     if (coordAfterMove.isInField && moveEdge.field(coordAfterMove).isWalkable) {
       Some(MoveNodeState(moveEdge.field, coordAfterMove))
     }
-    else
+    else {
       None
+    }
   }
 
   private def moveAsAPlayerInAnEmptyField(moveEdge: PotentialMoveEdge): Option[MoveNodeState] = {
@@ -34,8 +37,9 @@ object MoveNode {
     if (isMoveOk) {
       Some(MoveNodeState(moveEdge.field, coordAfterMove))
     }
-    else
+    else {
       None
+    }
   }
 }
 

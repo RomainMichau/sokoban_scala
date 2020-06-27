@@ -8,9 +8,9 @@ case class Coord(lig: Int, col: Int){
   def getCoordAfterMove(direction: Direction): Coord = {
     direction match {
       case UP => Coord(this.lig-1, this.col)
-      case DOWN => Coord(this.lig+1, this.col)
-      case RIGHT => Coord(this.lig, this.col+1)
-      case LEFT => Coord(this.lig, this.col-1)
+      case DOWN => Coord(this.lig + 1, this.col)
+      case RIGHT => Coord(this.lig, this.col + 1)
+      case LEFT => Coord(this.lig, this.col - 1)
     }
   }
 
@@ -21,16 +21,17 @@ case class Coord(lig: Int, col: Int){
   def moveToGoToCoord(coord: Coord): Move = {
     val lamdaLig = coord.lig - lig
     val lambdaCol = coord.col - col
-    val dir = if(lamdaLig == 1)
+    val dir = if(lamdaLig == 1) {
        DOWN
-    else if (lamdaLig == -1)
+    } else if (lamdaLig == -1) {
       UP
-    else if (lambdaCol == -1)
+    } else if (lambdaCol == -1) {
       LEFT
-    else if (lambdaCol == 1)
+    } else if (lambdaCol == 1) {
       RIGHT
-    else
+    } else {
       throw new Exception(s"${coord.toString} and $toString are not adjacent")
+    }
     Move(this, dir)
   }
 
@@ -56,7 +57,7 @@ case class Coord(lig: Int, col: Int){
 }
 
 object Direction{
-  def values = Set(UP, DOWN, LEFT, RIGHT)
+  def values: Set[Direction] = Set(UP, DOWN, LEFT, RIGHT)
 }
 
 sealed trait Direction{

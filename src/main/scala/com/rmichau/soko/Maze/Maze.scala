@@ -72,9 +72,11 @@ class Maze(filePath: URI) {
     for (lig <- 0 until this.nbLig) {
       for (col <- 0 until this.nbCol) {
         val sq = this.field(Coord(lig, col))
-        if (Coord(lig, col) != posPlayer)
+        if (Coord(lig, col) != posPlayer) {
           res+=sq.sym
-        else res+=5
+        } else {
+          res+=5
+        }
       }
       res+="\n"
     }
@@ -103,10 +105,11 @@ class Maze(filePath: URI) {
     val dest = boxCoord.getCoordAfterMove(direction)
     val destsq = field(dest)
     val sq = field(boxCoord)
-    if (sq.isABox && dest.isInField && destsq.isWalkable)
+    if (sq.isABox && dest.isInField && destsq.isWalkable) {
       Some(dest)
-    else
+    } else {
       None
+    }
   }
 
   private def loadLevelFromFile(filePath: URI): GameState = {

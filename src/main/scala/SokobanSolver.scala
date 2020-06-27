@@ -20,10 +20,11 @@ class SokobanSolver(levelFromArgument: Option[String]) extends JFXApp {
 
   val levelPicker: LevelPicker.type = LevelPicker
 
-  val lvl: URI = if (levelFromArgument.isDefined)
+  val lvl: URI = if (levelFromArgument.isDefined) {
     new URI(levelFromArgument.get)
-  else
+  } else {
     levelPicker.pickLevel
+  }
 
   val maze = new Maze(lvl)
   val res: BFS.BFSResult[PushBoxNode] = new MazeSolver(maze).solveMaze()

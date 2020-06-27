@@ -13,10 +13,11 @@ object AccessibleZone{
       .map(_.nodeState.pos)
     var nPos: Coord = accessibleCoord.head
     val accessibleBoxes: Set[Move] = field.boxes.flatMap{coord =>
-      if(coord.col < nPos.col)
+      if(coord.col < nPos.col) {
         nPos = coord
-      else if(coord.col == nPos.col && coord.lig < nPos.lig)
+      } else if(coord.col == nPos.col && coord.lig < nPos.lig) {
         nPos = coord
+      }
       coord.adjacentSq.filter(accessibleCoord(_)).map(adjCoord => adjCoord.moveToGoToCoord(coord))
       }
     AccessibleZone(accessibleCoord, accessibleBoxes, nPos)

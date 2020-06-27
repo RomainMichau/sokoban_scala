@@ -19,15 +19,16 @@ object BFS {
    *         If no goalNode is reachable None in returned
    */
   def doBFS[U <: BFSNode[U]](node: U, queue: BfsQueue[U], isGoalNode: U => Boolean, disp: Boolean = false): BFSResult[U] = {
-    if (queue.nonEmpty)
+    if (queue.nonEmpty) {
       throw new Exception("queue must be empty")
+    }
     val chrono = Util.Chrono()
     queue.enqueue(node)
     var visitedNode: Set[U] = Set(node)
     var won = isGoalNode(node)
-    var finalNode: Option[U] = if (won)
+    var finalNode: Option[U] = if (won) {
       Some(node)
-    else None
+    } else { None }
     while (queue.nonEmpty && !won) {
       val cuNode = queue.dequeue()
       cuNode.getConnectedNode.foreach { node =>
@@ -36,14 +37,12 @@ object BFS {
             won = true
             finalNode = Some(node)
           } else if (!visitedNode(node)) {
-     //       node.draw()
             queue.enqueue(node)
             visitedNode = visitedNode + node
           }
         }
       }
     }
-    val t1 = System.currentTimeMillis()
     if(disp) {
       println(s"solution found $won")
       println("BFS Elapsed time: " + (chrono.currentTime) + "ms")

@@ -21,8 +21,9 @@ case class PushBoxNode private(state: PushBoxNodeState,
                        incomingEdge: Option[PushBoxEdge],
                        initialPos: Option[Coord] = None) extends BFSNode[PushBoxNode]{
 
-  if(initialPos.isDefined && incomingEdge.isDefined)
+  if(initialPos.isDefined && incomingEdge.isDefined) {
     throw new Exception("initialPos and incomingEdge are both defined. Only one of them must be defined")
+  }
 
   lazy val currentPos: Coord = incomingEdge.map(_.incommingMove.arrivalCoord).getOrElse(initialPos.getOrElse(throw new Exception("no inital coord defined")))
 
@@ -36,7 +37,9 @@ case class PushBoxNode private(state: PushBoxNodeState,
         val newField = field.pushBox(boxPos, move.direction)
         Some(PushBoxNode(PushBoxNodeState(newField, AccessibleZone(newField, boxPos)), Some(PushBoxEdge(this, move))))
       }
-      else None
+      else {
+        None
+      }
     }
   }
 

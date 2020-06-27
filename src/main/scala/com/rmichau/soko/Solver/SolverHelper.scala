@@ -21,8 +21,9 @@ object SolverHelper {
       for (col <- 0 until Maze.getNbCol) {
         val dist = map.getOrElse((Coord(lig, col)), -1)
         print(dist + " ")
-        if (dist >= 0 && dist < 10)
+        if (dist >= 0 && dist < 10) {
           print(" ")
+        }
       }
       println()
     }
@@ -40,9 +41,9 @@ object SolverHelper {
       }
       .map { t =>
         val vect = t.flatMap(_.incomingEdge.map(_.move))
-        if (bfsRes.finalNode.get.incomingEdge.isDefined)
+        if (bfsRes.finalNode.get.incomingEdge.isDefined) {
           vect :+ bfsRes.finalNode.get.incomingEdge.get.move
-        else vect
+        } else {vect}
       }
     res
   }

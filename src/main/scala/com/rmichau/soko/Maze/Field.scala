@@ -73,9 +73,11 @@ class Field(private val field: Map[Coord, Square],
       print(lig + "  ")
       for (col <- 0 until Maze.getNbCol) {
         val sq = this.field(Coord(lig, col))
-        if (Coord(lig, col) != posPlayer.getOrElse(None))
+        if (Coord(lig, col) != posPlayer.getOrElse(None)) {
           print(getColor(sq) + sq.sym + "  ")
-        else print(Console.YELLOW + 5 + "  ")
+        } else {
+          print(Console.YELLOW + 5 + "  ")
+        }
       }
       println()
     }
@@ -84,13 +86,19 @@ class Field(private val field: Map[Coord, Square],
 }
 
 object SquareType extends Enumeration {
+  private val GROUND_NUM = 0
+  private val WALL_NUM = 1
+  private val BOX_NUM = 2
+  private val PLACED_BOX_NUM = 3
+  private val GOAL_NUM = 4
+  private val DEADLOCK_NUM = 9
   type SquareType = Value
-  val Ground = Value(0)
-  val Wall = Value(1)
-  val Box = Value(2)
-  val BoxPlaced = Value(3)
-  val Goal = Value(4)
-  val Deadlock = Value(9)
+  val Ground = Value(GROUND_NUM)
+  val Wall = Value(WALL_NUM)
+  val Box = Value(BOX_NUM)
+  val BoxPlaced = Value(PLACED_BOX_NUM)
+  val Goal = Value(GOAL_NUM)
+  val Deadlock = Value(DEADLOCK_NUM)
 }
 
 object Square {

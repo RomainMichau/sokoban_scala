@@ -6,7 +6,7 @@ import com.rmichau.soko.util.Util
 
 object Deadlocks {
   def detectStaticDeadLocks(field: Field): Iterable[Square] = {
-  println("calculating static deadlock")
+  print("calculating static deadlock")
     val ch = Util.Chrono()
     val res = field.getAllSquares
       .filter(sq => sq.sqType == SquareType.Ground)

@@ -16,11 +16,11 @@ object LevelPicker {
 
 
   val dialogStage = new Stage()
-  var res: URI = null
+  var res: URI = new URI("")
   val files: ObservableBuffer[File]= ObservableBuffer(Util.recursiveListFiles(new File("levels"))
     .filter(_.isFile).toList)
 
-  def pickLevel = {
+  def pickLevel: URI = {
     val grid = new GridPane()
     val comboBox = new ComboBox[File]() {
       items = files

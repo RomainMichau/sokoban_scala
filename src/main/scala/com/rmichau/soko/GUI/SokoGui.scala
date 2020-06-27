@@ -22,14 +22,19 @@ class SokoGui(maze: Maze) {
 
   val mazeProp: ObjectProperty[Maze] = new SimpleObjectProperty[Maze](maze)
   var gridNodes: Map[Coord, ImageView] = HashMap()
+  val TIME_BETWEEN_FRAME_MS: Int = 50
+  val IMAGE_WIDTH:Int = 30
+  val IMAGE_HEIGHT:Int = 30
+
   private val fieldImages: Map[SquareType, Image] = {
     val imgPath = SokoStage.imgPath
     var mp: Map[SquareType, Image] = HashMap()
     SquareType.values.foreach { sq =>
       val url = imgPath + sq.toString + ".jpg"
       val img = getImageFromPath(url)
-      if (img.width == null)
+      if (img.width == null) {
         throw new Exception(s"img $url does not exist")
+      }
       mp = mp + (sq -> img)
     }
     mp
@@ -38,14 +43,18 @@ class SokoGui(maze: Maze) {
   val grid: GridPane = loadMaze()
 
   val keyEventManager: KeyEvent => Unit = { key: KeyEvent =>
-    if (KeyCode.Up.getCode == key.getCode.getCode)
+    if (KeyCode.Up.getCode == key.getCode.getCode) {
       this.movePlayer(UP)
-    if (KeyCode.Down.getCode == key.getCode.getCode)
+    }
+    if (KeyCode.Down.getCode == key.getCode.getCode) {
       this.movePlayer(DOWN)
-    if (KeyCode.Left.getCode == key.getCode.getCode)
+    }
+    if (KeyCode.Left.getCode == key.getCode.getCode) {
       this.movePlayer(LEFT)
-    if (KeyCode.Right.getCode == key.getCode.getCode)
+    }
+    if (KeyCode.Right.getCode == key.getCode.getCode) {
       this.movePlayer(RIGHT)
+    }
     if (KeyCode.Escape.getCode == key.getCode.getCode) {
       maze.reinitGame()
       refreshGrid()
@@ -66,12 +75,12 @@ class SokoGui(maze: Maze) {
   }
 
   def drawMove(dirs: Vector[Direction]): Unit = {
-    val timeline = new Timeline(new KeyFrame(Duration.millis(50), new EventHandler[ActionEvent](){
+    val timeline = new Timeline(new KeyFrame(Duration.millis(TIME_BETWEEN_FRAME_MS), new EventHandler[ActionEvent](){
       var i = 0
       override def handle(t: ActionEvent): Unit = {
         movePlayer(dirs(i))
         refreshGrid()
-        i = i+1
+        i = i + 1
       }
     }))
     timeline.setCycleCount(dirs.size)
@@ -108,14 +117,15 @@ class SokoGui(maze: Maze) {
   }
 
   private def getImageFromPath(url: String): Image = {
-    new Image(url, 30, 30, false, false)
+    new Image(url, IMAGE_WIDTH, IMAGE_HEIGHT, false, false)
   }
 
   private def getImgView(square: Square, coord: Coord, isPlayer: Boolean = false): ImageView = {
-    val img = if (!isPlayer)
+    val img = if (!isPlayer) {
       new ImageView(fieldImages(square.sqType))
-    else
+    } else {
       new ImageView(marioImg)
+    }
     Tooltip.install(img, new Tooltip(coord.toString))
     img
   }
