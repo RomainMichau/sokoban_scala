@@ -9,29 +9,35 @@ pipeline {
         stage('Compile') {
             steps {
                 echo "Compiling..."
+                ansiColor('xterm') {
                 sh "/usr/local/bin/sbt compile"
+            }
             }
         }
 
         stage('Lint') {
             steps {
+            ansiColor('xterm') {
                 echo "Testing..."
                 sh "/usr/local/bin/sbt scalastyle -scalastyleFailOnWarning"
-            }
+            }}
         }
 
         stage('Test') {
-            steps {
+            steps {ansiColor('xterm') {
                 echo "Testing..."
                 sh "/usr/local/bin/sbt test"
+                }
             }
         }
 
 
         stage('Package') {
             steps {
+            ansiColor('xterm') {
                 echo "Packaging..."
                 sh "/usr/local/bin/sbt package"
+                }
             }
         }
 
