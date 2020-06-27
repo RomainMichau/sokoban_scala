@@ -9,21 +9,21 @@ pipeline {
         stage('Compile') {
             steps {
                 echo "Compiling..."
-                sh "/usr/local/bin/sbt compile --no-color"
+                sh "/usr/local/bin/sbt compile"
             }
         }
 
         stage('Lint') {
             steps {
                 echo "Testing..."
-                sh "/usr/local/bin/sbt scalastyle -scalastyleFailOnWarning --no-color"
+                sh "/usr/local/bin/sbt scalastyle -scalastyleFailOnWarning"
             }
         }
 
         stage('Test') {
             steps {
                 echo "Testing..."
-                sh "/usr/local/bin/sbt test --no-color"
+                sh "/usr/local/bin/sbt test"
             }
         }
 
@@ -31,7 +31,7 @@ pipeline {
         stage('Package') {
             steps {
                 echo "Packaging..."
-                sh "/usr/local/bin/sbt package --no-color"
+                sh "/usr/local/bin/sbt package"
             }
         }
 
