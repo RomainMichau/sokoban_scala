@@ -16,7 +16,7 @@ pipeline {
         stage('Lint') {
             steps {
                 echo "Testing..."
-                sh "/usr/local/bin/sbt scalastyle"
+                sh "/usr/local/bin/sbt scalastyle -scalastyleFailOnWarning"
             }
         }
 
