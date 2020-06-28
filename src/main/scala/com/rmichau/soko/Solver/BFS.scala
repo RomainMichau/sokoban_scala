@@ -1,6 +1,9 @@
 package com.rmichau.soko.Solver
 
 
+import java.io.{File, PrintWriter}
+import java.util.Calendar
+
 import com.rmichau.soko.Solver.Node.BFSNode
 import com.rmichau.soko.util.Util
 
@@ -9,7 +12,9 @@ import scala.collection.{immutable, mutable}
 
 object BFS {
 
-  case class BFSResult[U <: BFSNode[U]](finalNode: Option[U], visitedNode: Set[U], timeToFindRes: Long, nodeToFindRes: Int)
+  case class BFSResult[U <: BFSNode[U]](finalNode: Option[U], visitedNode: Set[U], timeToFindRes: Long, nodeToFindRes: Int) {
+    override def toString: String = s"visited Nodes: $visitedNode; time: $timeToFindRes ms"
+  }
 
   /**
    * Do a bfs to fin a BFSNode marked as goal from the node sent in parameters
@@ -28,14 +33,16 @@ object BFS {
     var won = isGoalNode(node)
     var finalNode: Option[U] = if (won) {
       Some(node)
-    } else { None }
+    } else {
+      None
+    }
     while (queue.nonEmpty && !won) {
       val cuNode = queue.dequeue()
-      if(debug){
+      if (debug) {
         println(s"=====Current Node: ${cuNode.details}")
       }
       cuNode.getConnectedNode.foreach { node =>
-        if(debug) {
+        if (debug) {
           println(s"neigb Node: ${node.details}")
         }
         if (!won) {
@@ -49,12 +56,32 @@ object BFS {
         }
       }
     }
-    if(disp) {
-      println(s"solution found $won")
-      println("BFS Elapsed time: " + (chrono.currentTime) + "ms")
-      println(s"Nove visited: ${visitedNode.size}")
+    val resTxt = s"solution found $won \n" +
+      "BFS Elapsed time: " + (chrono.currentTime) + "ms\n" +
+      s"Nove visited: ${visitedNode.size}"
+    if (disp) {
+      print(resTxt)
+    }
+
+    if (disp) {
+      writeInFile(resTxt)
     }
     BFSResult(finalNode, visitedNode, chrono.currentTime, visitedNode.size)
+
+  }
+
+  private def writeInFile(resTxt: String): Unit = {
+    val file = new File("previous_res")
+    val line = if (file.exists()) {
+      Some(scala.io.Source.fromFile(file).mkString)
+    }
+    else {
+      None
+    }
+
+    val writer = new PrintWriter(new File("previous_res"))
+    writer.write(Calendar.getInstance().getTime + "\n" + resTxt + "\n=============== \n" + line.getOrElse(""))
+    writer.close()
   }
 }
 

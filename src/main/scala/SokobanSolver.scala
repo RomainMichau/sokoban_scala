@@ -7,10 +7,23 @@ import com.rmichau.soko.Solver.Node.PushBoxNode
 import com.rmichau.soko.Solver.{AccessibleZone, BFS, MazeSolver, SolverHelper}
 import scalafx.application.JFXApp
 
+object SokoGlobalValue  {
+  var debugMode: Boolean = false
+}
+
 object SokobanSolverLauncher {
-  def main(args: Array[String]): Unit = {
-    new SokobanSolver(args.headOption).main(Array())
+  def argumentParser(args: Array[String]): SokoArguments = {
+    val level = args.find(_.contains("-level:")).map(_.replace("-level:", ""))
+    val debug = args.exists(_.contains("-debug"))
+    SokoArguments(level, debug)
   }
+  def main(args: Array[String]): Unit = {
+    val arguments = argumentParser(args)
+    SokoGlobalValue.debugMode = arguments.debug
+    new SokobanSolver(arguments.level).main(Array())
+  }
+
+  case class SokoArguments(level: Option[String], debug: Boolean)
 }
 
 

@@ -35,7 +35,7 @@ case class PushBoxNode private(state: PushBoxNodeState,
       val newBoxPos = boxPos.getCoordAfterMove(move.direction)
       if(field(newBoxPos).isWalkable && field(newBoxPos).sqType != SquareType.Deadlock){
         val newField = field.pushBox(boxPos, move.direction)
-        if(true){
+        if(!isADynamicDeadLock(newBoxPos)){
           Some(PushBoxNode(PushBoxNodeState(newField, AccessibleZone(newField, boxPos)), Some(PushBoxEdge(this, move))))
         }
         else{
@@ -48,7 +48,7 @@ case class PushBoxNode private(state: PushBoxNodeState,
     }
   }
 
-  private def isADynamicDeadLock(field: Field, newBox: Coord): Boolean = {
+  private def isADynamicDeadLock(newBox: Coord): Boolean = {
     var alreadyTestCoord: Set[Coord] = Set()
     def isBoxBlocked(box: Coord): Boolean = {
       alreadyTestCoord += box
