@@ -5,5 +5,9 @@ This project has been develop in Scala and use graph theory
 ScalaFX is used for the GUI
 *By Romain Michau*
 
+Requirement  
+- java 11
+- sbt
+
 To make it run:
 `sbt run`

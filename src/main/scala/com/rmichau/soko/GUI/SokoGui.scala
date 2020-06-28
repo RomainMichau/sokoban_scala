@@ -104,6 +104,7 @@ class SokoGui(var maze: Maze) {
         rightSideCommand.timeTofindRes.setValue(result.timeToFindRes.toString)
         rightSideCommand.resLenght.setValue(dirs.length.toString)
         this.drawMove(dirs)
+      case None =>
     }
   }
 
