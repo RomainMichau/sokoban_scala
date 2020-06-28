@@ -2,3 +2,4 @@
        However some levels could not be solved (E3, E8)
 
 - For M1 when NPos is always the same, it works better
+-Dyn deadlocks dont work for now
