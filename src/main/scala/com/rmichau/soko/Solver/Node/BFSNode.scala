@@ -12,6 +12,7 @@ trait BFSNode[U <: BFSNode[U]] {
   }
   // Draw node on console (use to debug)
   def draw(): Unit
+  def details: String
 }
 
 trait BFSIncomingEdge[U <: BFSNode[U]] {

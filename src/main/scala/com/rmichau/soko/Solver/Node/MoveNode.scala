@@ -78,6 +78,8 @@ case class MoveNode(nodeState: MoveNodeState,
   }
 
   override def draw(): Unit = print("")
+
+  override def details: String = ???
 }
 
 class PotentialMoveEdge(val move: Move, val field: Field)

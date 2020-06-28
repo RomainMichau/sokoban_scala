@@ -1,0 +1,2 @@
+- When defining the Npos on the most up & left box instead of the most up & left square. BFS was a lot faster
+       However some levels could not be solved (E3, E8)

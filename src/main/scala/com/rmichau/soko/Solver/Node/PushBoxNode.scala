@@ -27,7 +27,7 @@ case class PushBoxNode private(state: PushBoxNodeState,
 
   lazy val currentPos: Coord = incomingEdge.map(_.incommingMove.arrivalCoord).getOrElse(initialPos.getOrElse(throw new Exception("no inital coord defined")))
 
-  val field: Field = state.field
+  def field: Field = state.field
 
   override def getConnectedNode: Set[PushBoxNode] =  {
     this.state.accessibleZone.potentialPushBoxes.flatMap{ move =>
@@ -43,7 +43,6 @@ case class PushBoxNode private(state: PushBoxNodeState,
         }
       }
       else {
-      //  field.drawField()
           None
       }
     }
@@ -93,6 +92,8 @@ case class PushBoxNode private(state: PushBoxNodeState,
 
   override def toString: String = this.incomingEdge.map(edge => edge.incommingMove.initialCoord.toString + edge.incommingMove.direction)
     .getOrElse("First Node")
+
+  def details: String = s"boxes: ${field.getBoxes}, nPos ${state.accessibleZone.nPos}"
 }
 
 case class PushBoxNodeState(field: Field, accessibleZone: AccessibleZone) {
@@ -106,8 +107,8 @@ case class PushBoxNodeState(field: Field, accessibleZone: AccessibleZone) {
   }
 
   override def hashCode(): Int = {
-    val hashField = MurmurHash3.setHash(field.getBoxes)
-    MurmurHash3.listHash(List(hashField, accessibleZone.nPos), 0)
+    val hashField = MurmurHash3.setHash(field.getBoxes + accessibleZone.nPos)
+    MurmurHash3.listHash(List(hashField), 1)
   }
 }
 

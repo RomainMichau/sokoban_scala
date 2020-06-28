@@ -18,7 +18,7 @@ object BFS {
    * @return return the Fist node marked as a bfs goal. Path to this node can be get with node.getPathToNode
    *         If no goalNode is reachable None in returned
    */
-  def doBFS[U <: BFSNode[U]](node: U, queue: BfsQueue[U], isGoalNode: U => Boolean, disp: Boolean = false): BFSResult[U] = {
+  def doBFS[U <: BFSNode[U]](node: U, queue: BfsQueue[U], isGoalNode: U => Boolean, disp: Boolean = false, debug: Boolean = false): BFSResult[U] = {
     if (queue.nonEmpty) {
       throw new Exception("queue must be empty")
     }
@@ -31,7 +31,13 @@ object BFS {
     } else { None }
     while (queue.nonEmpty && !won) {
       val cuNode = queue.dequeue()
+      if(debug){
+        println(s"=====Current Node: ${cuNode.details}")
+      }
       cuNode.getConnectedNode.foreach { node =>
+        if(debug) {
+          println(s"neigb Node: ${node.details}")
+        }
         if (!won) {
           if (isGoalNode(node)) {
             won = true
