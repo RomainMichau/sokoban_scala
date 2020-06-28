@@ -100,7 +100,7 @@ class SokoGui(var maze: Maze) {
     finalNode match {
       case Some(res) =>
         val dirs = res.toDirs
-        rightSideCommand.nodeToFindRes.setValue(result.nodeToFindRes.toString)
+        rightSideCommand.nodeToFindRes.setText(result.nodeToFindRes.toString)
         rightSideCommand.timeTofindRes.setValue(result.timeToFindRes.toString)
         rightSideCommand.resLenght.setValue(dirs.length.toString)
         this.drawMove(dirs)
@@ -145,9 +145,11 @@ class SokoGui(var maze: Maze) {
         pane.add(r, col + 1, lig, 1, 1)
       }
     }
+
     rightSideCommand.values.foreach{ label =>
       pane.add(label, Maze.getNbCol + 1, label.row)
     }
+
     leftSideCommand.values.foreach{ button =>
       pane.add(button, 0, button.row)
     }
@@ -176,7 +178,7 @@ class SokoGui(var maze: Maze) {
 
   trait GridMember extends Node {val row: Int}
 
-  class DescriptorLabel(descriptor: String, val row: Int,private var value: String = "", suffix: String = "") extends Label with GridMember{
+  class DescriptorLabel(descriptor: String, val row: Int,private var value: String = "", suffix: String = "") extends Label {
     this.text = s"$descriptor: $value $suffix"
     def setValue(newValue: String): Unit = this.setText(s"$descriptor: $newValue $suffix")
     }
@@ -185,12 +187,12 @@ class SokoGui(var maze: Maze) {
   class ProgressIndicatorNode(val row: Int) extends ProgressIndicator with GridMember
 
   object rightSideCommand {
-    def levelName: DescriptorLabel = new DescriptorLabel("levelName", 0, maze.levelName)
-    def ongoingGamePlay: DescriptorLabel = new DescriptorLabel("Gameplay type", 1, "manual")
-    def timeTofindRes: DescriptorLabel = new DescriptorLabel("BFS Time", 2, suffix = "ms")
-    def nodeToFindRes: DescriptorLabel = new DescriptorLabel("Nb nodes visited", 3)
-    def resLenght: DescriptorLabel = new DescriptorLabel("Res length", 4)
-    def values: Set[GridMember] = Set(levelName, ongoingGamePlay, timeTofindRes, nodeToFindRes, resLenght)
+    val levelName: DescriptorLabel = new DescriptorLabel("levelName", 0, maze.levelName)
+    val ongoingGamePlay: DescriptorLabel = new DescriptorLabel("Gameplay type", 1, "manual")
+    val timeTofindRes: DescriptorLabel = new DescriptorLabel("BFS Time", 2, suffix = "ms")
+    val nodeToFindRes: DescriptorLabel = new DescriptorLabel("Nb nodes visited", 3)
+    val resLenght: DescriptorLabel = new DescriptorLabel("Res length", 4)
+    def values: Set[DescriptorLabel] = Set(levelName, ongoingGamePlay, timeTofindRes, resLenght, nodeToFindRes)
   }
 
   object leftSideCommand {
