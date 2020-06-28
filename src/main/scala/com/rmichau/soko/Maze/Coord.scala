@@ -58,6 +58,7 @@ case class Coord(lig: Int, col: Int){
 
 object Direction{
   def values: Set[Direction] = Set(UP, DOWN, LEFT, RIGHT)
+  def leftAndUp: Set[Direction] = Set(UP, LEFT)
 }
 
 sealed trait Direction{

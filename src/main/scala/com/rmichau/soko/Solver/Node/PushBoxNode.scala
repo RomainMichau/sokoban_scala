@@ -18,8 +18,8 @@ object PushBoxNode{
  * @param initialPos is only for the first node
  */
 case class PushBoxNode private(state: PushBoxNodeState,
-                       incomingEdge: Option[PushBoxEdge],
-                       initialPos: Option[Coord] = None) extends BFSNode[PushBoxNode]{
+                               incomingEdge: Option[PushBoxEdge],
+                               initialPos: Option[Coord] = None) extends BFSNode[PushBoxNode]{
 
   if(initialPos.isDefined && incomingEdge.isDefined) {
     throw new Exception("initialPos and incomingEdge are both defined. Only one of them must be defined")
@@ -35,12 +35,43 @@ case class PushBoxNode private(state: PushBoxNodeState,
       val newBoxPos = boxPos.getCoordAfterMove(move.direction)
       if(field(newBoxPos).isWalkable && field(newBoxPos).sqType != SquareType.Deadlock){
         val newField = field.pushBox(boxPos, move.direction)
-        Some(PushBoxNode(PushBoxNodeState(newField, AccessibleZone(newField, boxPos)), Some(PushBoxEdge(this, move))))
+        if(true){
+          Some(PushBoxNode(PushBoxNodeState(newField, AccessibleZone(newField, boxPos)), Some(PushBoxEdge(this, move))))
+        }
+        else{
+          None
+        }
       }
       else {
-        None
+      //  field.drawField()
+          None
       }
     }
+  }
+
+  private def isADynamicDeadLock(field: Field, newBox: Coord): Boolean = {
+    var alreadyTestCoord: Set[Coord] = Set()
+    def isBoxBlocked(box: Coord): Boolean = {
+      alreadyTestCoord += box
+      val boxDirectlyPushable = Direction.leftAndUp.exists { dir =>
+        val frontCoord = box.getCoordAfterMove(dir)
+        val behindCoord = box.getCoordAfterMove(dir.getOpposite)
+        frontCoord.isInField && behindCoord.isInField && field(frontCoord).isWalkable && field(behindCoord).isWalkable
+      }
+      val adjacentBoxIsPushable = box.adjacentSq.filter{ adjCoord =>
+        adjCoord.isInField &&
+          field(adjCoord).isABox &&
+          !alreadyTestCoord.contains(adjCoord)
+      }.exists(!isBoxBlocked(_))
+      !boxDirectlyPushable && !adjacentBoxIsPushable
+    }
+
+    val res = field(newBox).sqType != SquareType.BoxPlaced && isBoxBlocked(newBox)
+    if(res) {
+      field.drawField()
+      print(res)
+    }
+    res
   }
 
   def toDirs: immutable.Vector[Direction] = {

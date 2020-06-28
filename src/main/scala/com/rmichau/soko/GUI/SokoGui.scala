@@ -151,9 +151,7 @@ class SokoGui(var maze: Maze) {
       pane.add(label, Maze.getNbCol + 1, label.row)
     }
 
-    leftSideCommand.values.foreach{ button =>
-      pane.add(button, 0, button.row)
-    }
+    leftSideCommand.values.foreach{button => pane.add(button, 0, button.row) }
 
     pane
   }
@@ -184,7 +182,9 @@ class SokoGui(var maze: Maze) {
     def setValue(newValue: String): Unit = this.setText(s"$descriptor: $newValue $suffix")
     }
 
-  class LevelCommandButton(val row: Int) extends Button with GridMember
+  class LevelCommandButton(val row: Int) extends Button with GridMember{
+    this.focusTraversable = false
+  }
   class ProgressIndicatorNode(val row: Int) extends ProgressIndicator with GridMember
 
   object rightSideCommand {
