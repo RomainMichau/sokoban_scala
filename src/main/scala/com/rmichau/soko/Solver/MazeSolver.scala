@@ -2,22 +2,33 @@ package com.rmichau.soko.Solver
 
 import com.rmichau.soko.Maze.Maze
 import com.rmichau.soko.Solver.Node.{PushBoxNode, PushBoxNodeState}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-class MazeSolver(maze: Maze) {
+class MazeSolver(private var maze: Maze) {
 
-  private val distMap = SolverHelper.getDistMap(maze.field)
-  def diff(node: PushBoxNode): Int= {
+  def setMaze(newMaze: Maze): Unit = {
+    this.maze = newMaze
+    distMap = SolverHelper.getDistMap(maze.field)
+  }
+
+  private var distMap = SolverHelper.getDistMap(maze.field)
+
+  def diff(node: PushBoxNode): Int = {
     val field = node.field
     val boxPlaced = field.getBoxes.intersect(field.goals)
     val dist = node.field.getBoxes.map(box => distMap(box)).sum
-    -dist
+    -dist + boxPlaced.size * 2
   }
 
-  def solveMaze(): BFS.BFSResult[PushBoxNode] = {
-    val node: PushBoxNode = PushBoxNode(PushBoxNodeState(maze.field,AccessibleZone(maze.field, maze.posPlayer)), maze.posPlayer)
+  def solveMaze():BFS.BFSResult[PushBoxNode] ={
+    println(s"solving maze ${maze.levelName}")
+    val node: PushBoxNode = PushBoxNode(PushBoxNodeState(maze.field, AccessibleZone(maze.field, maze.posPlayer)), maze.posPlayer)
     BFS.doBFS(node,
       new BfsPriorityQueue[PushBoxNode](Ordering.by(diff)),
       (node: PushBoxNode) => node.field.getBoxes == node.field.goals,
       disp = true)
   }
+
+
 }

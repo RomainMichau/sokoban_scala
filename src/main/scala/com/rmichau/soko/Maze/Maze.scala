@@ -21,6 +21,8 @@ class Maze(filePath: URI) {
   // see: https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000168244/comments/115000201030
   private var currentGameState: GameState = loadLevelFromFile(filePath)
 
+  lazy val levelName: String = filePath.toString.split("/").last
+
   def field: Field = currentGameState.field
 
   def posPlayer: Coord = currentGameState.playerPos

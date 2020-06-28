@@ -1,8 +1,10 @@
 package com.rmichau.soko.GUI
 
+import com.rmichau.soko.GUI.LevelPicker.{dialogStage, res}
 import com.rmichau.soko.Maze.SquareType.SquareType
 import com.rmichau.soko.Maze._
-import com.rmichau.soko.Solver.BFS
+import com.rmichau.soko.Solver.BFS.BFSResult
+import com.rmichau.soko.Solver.{BFS, MazeSolver}
 import com.rmichau.soko.Solver.Node.PushBoxNode
 import javafx.animation.{KeyFrame, Timeline}
 import javafx.beans.property.SimpleObjectProperty
@@ -10,22 +12,27 @@ import javafx.event.{ActionEvent, EventHandler}
 import javafx.scene.control.Tooltip
 import javafx.util.Duration
 import scalafx.Includes._
+import scalafx.animation.PauseTransition
 import scalafx.beans.property.ObjectProperty
-import scalafx.scene.Scene
+import scalafx.scene.{Node, Scene}
+import scalafx.scene.control.{Button, Label, ProgressIndicator}
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.input.{KeyCode, KeyEvent}
 import scalafx.scene.layout.GridPane
 
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.collection.immutable.HashMap
+import scala.concurrent.Await
 
-class SokoGui(maze: Maze) {
+class SokoGui(var maze: Maze) {
 
   val mazeProp: ObjectProperty[Maze] = new SimpleObjectProperty[Maze](maze)
   var gridNodes: Map[Coord, ImageView] = HashMap()
   val TIME_BETWEEN_FRAME_MS: Int = 50
   val IMAGE_WIDTH:Int = 30
   val IMAGE_HEIGHT:Int = 30
-
+  val mazeSolver: MazeSolver = new MazeSolver(maze)
   private val fieldImages: Map[SquareType, Image] = {
     val imgPath = SokoStage.imgPath
     var mp: Map[SquareType, Image] = HashMap()
@@ -40,7 +47,8 @@ class SokoGui(maze: Maze) {
     mp
   }
   private val marioImg = getImageFromPath(getClass.getResource("/img/mario.jpg").toString)
-  val grid: GridPane = loadMaze()
+
+  var grid: GridPane = loadMaze()
 
   val keyEventManager: KeyEvent => Unit = { key: KeyEvent =>
     if (KeyCode.Up.getCode == key.getCode.getCode) {
@@ -59,11 +67,24 @@ class SokoGui(maze: Maze) {
       maze.reinitGame()
       refreshGrid()
     }
+    if(KeyCode.R.getCode == key.getCode.getCode){
+      launchSolver()
+    }
+  }
+
+  private def launchSolver(): Unit = {
+    //leftSideCommand.progressIndicator.disable = false
+    manageBfsResult(mazeSolver.solveMaze())
+    /*
+    val pause = new PauseTransition(Duration.seconds(1)){
+      this.onFinished = (_: ActionEvent) => manageBfsResult(mazeSolver.solveMaze())
+    }
+    pause.play()*/
   }
 
   private def field = maze.getGameState.field
 
-  private def posPlayer = maze.getGameState.playerPos
+  private def posPlayer: Coord = maze.getGameState.playerPos
 
   def stage(): Unit = {
 
@@ -74,7 +95,19 @@ class SokoGui(maze: Maze) {
     SokoStage.setScene(scene)
   }
 
-  def drawMove(dirs: Vector[Direction]): Unit = {
+  private def manageBfsResult(result: BFSResult[PushBoxNode]): Unit = {
+    val finalNode = result.finalNode
+    finalNode match {
+      case Some(res) =>
+        val dirs = res.toDirs
+        rightSideCommand.nodeToFindRes.setValue(result.nodeToFindRes.toString)
+        rightSideCommand.timeTofindRes.setValue(result.timeToFindRes.toString)
+        rightSideCommand.resLenght.setValue(dirs.length.toString)
+        this.drawMove(dirs)
+    }
+  }
+
+  private def drawMove(dirs: Vector[Direction]): Unit = {
     val timeline = new Timeline(new KeyFrame(Duration.millis(TIME_BETWEEN_FRAME_MS), new EventHandler[ActionEvent](){
       var i = 0
       override def handle(t: ActionEvent): Unit = {
@@ -85,8 +118,7 @@ class SokoGui(maze: Maze) {
     }))
     timeline.setCycleCount(dirs.size)
     timeline.play()
-    }
-
+  }
 
   private def refreshGrid(): Unit = {
     (0 until Maze.getNbLig).indices.foreach { lig =>
@@ -95,7 +127,7 @@ class SokoGui(maze: Maze) {
         val r = this.getImgView(field(coord), coord, coord == posPlayer)
         grid.children.remove(gridNodes(Coord(lig, col)))
         gridNodes = gridNodes + (Coord(lig, col) -> r)
-        grid.add(r, col, lig, 1, 1)
+        grid.add(r, col + 1, lig, 1, 1)
       }
     }
   }
@@ -110,9 +142,16 @@ class SokoGui(maze: Maze) {
         val coord = Coord(lig, col)
         val r = this.getImgView(field(coord), coord, coord == posPlayer)
         gridNodes = gridNodes + (Coord(lig, col) -> r)
-        pane.add(r, col, lig, 1, 1)
+        pane.add(r, col + 1, lig, 1, 1)
       }
     }
+    rightSideCommand.values.foreach{ label =>
+      pane.add(label, Maze.getNbCol + 1, label.row)
+    }
+    leftSideCommand.values.foreach{ button =>
+      pane.add(button, 0, button.row)
+    }
+
     pane
   }
 
@@ -130,16 +169,57 @@ class SokoGui(maze: Maze) {
     img
   }
 
-  private def movePlayer(direction: Direction) = {
- val won = maze.movePlayer(direction)
+  private def movePlayer(direction: Direction): Unit = {
+    maze.movePlayer(direction)
     refreshGrid()
-   /* if (won) {
-      import javafx.scene.control.Alert.AlertType
-      new Alert(AlertType.INFORMATION) {
-        title = "You won!!!"
-        headerText = "You won!!!"
-        contentText = "You won!!!"
-      }.showAndWait()
+  }
+
+  trait GridMember extends Node {val row: Int}
+
+  class DescriptorLabel(descriptor: String, val row: Int,private var value: String = "", suffix: String = "") extends Label with GridMember{
+    this.text = s"$descriptor: $value $suffix"
+    def setValue(newValue: String): Unit = this.setText(s"$descriptor: $newValue $suffix")
+    }
+
+  class LevelCommandButton(val row: Int) extends Button with GridMember
+  class ProgressIndicatorNode(val row: Int) extends ProgressIndicator with GridMember
+
+  object rightSideCommand {
+    def levelName: DescriptorLabel = new DescriptorLabel("levelName", 0, maze.levelName)
+    def ongoingGamePlay: DescriptorLabel = new DescriptorLabel("Gameplay type", 1, "manual")
+    def timeTofindRes: DescriptorLabel = new DescriptorLabel("BFS Time", 2, suffix = "ms")
+    def nodeToFindRes: DescriptorLabel = new DescriptorLabel("Nb nodes visited", 3)
+    def resLenght: DescriptorLabel = new DescriptorLabel("Res length", 4)
+    def values: Set[GridMember] = Set(levelName, ongoingGamePlay, timeTofindRes, nodeToFindRes, resLenght)
+  }
+
+  object leftSideCommand {
+    val changeLevelButton: LevelCommandButton = new LevelCommandButton(0) {
+      this.text = "change level"
+      this.onAction = (_: ActionEvent) => {
+        this.disable = true
+        maze = new Maze(LevelPicker.pickLevel)
+        mazeSolver.setMaze(maze)
+        grid = loadMaze()
+        stage()
+        this.disable = false
+      }
+    }
+
+    val solveLevelButton: LevelCommandButton = new LevelCommandButton(1){
+      this.text = "solve level"
+      this.onAction = (_: ActionEvent) => {
+        this.disable = true
+        launchSolver()
+        this.disable = false
+      }
+    }
+   /* val progressIndicator: ProgressIndicatorNode = new ProgressIndicatorNode(2){
+      this.disable = true
+      this.maxHeight = IMAGE_HEIGHT
+      this.maxWidth = IMAGE_WIDTH
     }*/
+    val values: Set[GridMember] = Set(changeLevelButton, solveLevelButton)
+
   }
 }

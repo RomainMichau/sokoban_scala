@@ -9,7 +9,7 @@ import scala.collection.{immutable, mutable}
 
 object BFS {
 
-  case class BFSResult[U <: BFSNode[U]](finalNode: Option[U], visitedNode: Set[U])
+  case class BFSResult[U <: BFSNode[U]](finalNode: Option[U], visitedNode: Set[U], timeToFindRes: Long, nodeToFindRes: Int)
 
   /**
    * Do a bfs to fin a BFSNode marked as goal from the node sent in parameters
@@ -48,7 +48,7 @@ object BFS {
       println("BFS Elapsed time: " + (chrono.currentTime) + "ms")
       println(s"Nove visited: ${visitedNode.size}")
     }
-    BFSResult(finalNode, visitedNode)
+    BFSResult(finalNode, visitedNode, chrono.currentTime, visitedNode.size)
   }
 }
 

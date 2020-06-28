@@ -27,9 +27,9 @@ class SokobanSolver(levelFromArgument: Option[String]) extends JFXApp {
   }
 
   val maze = new Maze(lvl)
-  val res: BFS.BFSResult[PushBoxNode] = new MazeSolver(maze).solveMaze()
+ // val res: BFS.BFSResult[PushBoxNode] = new MazeSolver(maze).solveMaze()
   val gui = new SokoGui(maze)
   gui.stage()
-  gui.drawMove(res.finalNode.get.toDirs)
+ // gui.drawMove(res.finalNode.get.toDirs)
 }
 

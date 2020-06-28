@@ -26,11 +26,9 @@ object LevelPicker {
       items = files
     }
     val button = new Button("ok")
-    button.onAction =new EventHandler[ActionEvent]{
-      def handle(actionEvent: ActionEvent) = {
-        dialogStage.close()
-        res = comboBox.value.value.toURI
-      }
+    button.onAction = (actionEvent: ActionEvent) => {
+      dialogStage.close()
+      res = comboBox.value.value.toURI
     }
     grid.add(new Label("choose a level"),0,0 )
     grid.add(comboBox,0,1 )
