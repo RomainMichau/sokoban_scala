@@ -13,20 +13,21 @@ class SokobanTest extends FunSuite {
   assert(levels.toSeq.toString() == "WrappedArray(test/levels/medium/medium_3.dat, test/levels/medium/medium_2.dat, test/levels/medium/medium_1.dat," +
     " test/levels/test/test_1.dat, test/levels/test/test_4.dat, test/levels/test/test_2.dat, test/levels/easy/easy_1.dat, test/levels/easy/easy_2.dat)")
  }
- val mazee1 = new Maze(levels.filter(_.toURI.toString.contains("easy_1"))(0).toURI)
+/*
  test("test maze loading + static deadlock detection"){
+  val mazee1 = new Maze(levels.filter(_.toURI.toString.contains("easy_1"))(0).toURI)
   assert(mazee1.toString=="111111\n194111\n100111\n135091\n100291\n199111\n111111\n111111\n")
  }
- val mazeSolver: MazeSolver = new MazeSolver(mazee1)
+ /**/
  val solvedMazeE1: BFS.BFSResult[PushBoxNode] = mazeSolver.solveMaze()
 
  test("easy1 should be solved"){
   assert(solvedMazeE1.finalNode.isDefined)
   assert(solvedMazeE1.finalNode.get.toDirs.size > 1)
- }
+ }*/
 
  val mazem1 = new Maze(levels.filter(_.toURI.toString.contains("medium_1"))(0).toURI)
- mazeSolver.setMaze(mazem1)
+ val mazeSolver: MazeSolver = new MazeSolver(mazem1)
  val solvedMazeM1: BFS.BFSResult[PushBoxNode] = mazeSolver.solveMaze()
 
  test("medium 1 should be solved"){
