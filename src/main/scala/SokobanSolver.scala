@@ -1,10 +1,9 @@
-
 import java.net.URI
 
-import com.rmichau.soko.GUI.{ LevelPicker, SokoGui }
-import com.rmichau.soko.Maze.{ Coord, Maze, Move }
+import com.rmichau.soko.GUI.{LevelPicker, SokoGui}
+import com.rmichau.soko.Maze.{Coord, Maze, Move}
 import com.rmichau.soko.Solver.Node.PushBoxNode
-import com.rmichau.soko.Solver.{ AccessibleZone, BFS, MazeSolver, SolverHelper }
+import com.rmichau.soko.Solver.{AccessibleZone, BFS, MazeSolver, SolverHelper}
 import scalafx.application.JFXApp
 
 object SokoGlobalValue {
@@ -42,4 +41,3 @@ class SokobanSolver(levelFromArgument: Option[String]) extends JFXApp {
   gui.stage()
   // gui.drawMove(res.finalNode.get.toDirs)
 }
-

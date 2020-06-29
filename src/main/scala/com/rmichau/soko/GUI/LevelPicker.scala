@@ -4,19 +4,23 @@ import java.io.File
 import java.net.URI
 
 import com.rmichau.soko.util.Util
-import javafx.event.{ ActionEvent, EventHandler }
+import javafx.event.{ActionEvent, EventHandler}
 import javafx.stage.Stage
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.Scene
-import scalafx.scene.control.{ Button, ComboBox, Label }
+import scalafx.scene.control.{Button, ComboBox, Label}
 import scalafx.scene.layout.GridPane
 
 object LevelPicker {
 
   val dialogStage = new Stage()
   var res: URI = new URI("")
-  val files: ObservableBuffer[File] = ObservableBuffer(Util.recursiveListFiles(new File("levels"))
-    .filter(_.isFile).toList)
+  val files: ObservableBuffer[File] = ObservableBuffer(
+    Util
+      .recursiveListFiles(new File("levels"))
+      .filter(_.isFile)
+      .toList
+  )
 
   def pickLevel: URI = {
     val grid = new GridPane()

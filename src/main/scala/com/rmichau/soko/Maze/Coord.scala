@@ -6,17 +6,17 @@ case class Coord(lig: Int, col: Int) {
 
   def getCoordAfterMove(direction: Direction): Coord = {
     direction match {
-      case UP => Coord(this.lig - 1, this.col)
-      case DOWN => Coord(this.lig + 1, this.col)
+      case UP    => Coord(this.lig - 1, this.col)
+      case DOWN  => Coord(this.lig + 1, this.col)
       case RIGHT => Coord(this.lig, this.col + 1)
-      case LEFT => Coord(this.lig, this.col - 1)
+      case LEFT  => Coord(this.lig, this.col - 1)
     }
   }
 
   /**
-   * Return the direction to go the the coord
-   * @param coord MUST BE ADJACENT (Sinon exception !!!)
-   */
+    * Return the direction to go the the coord
+    * @param coord MUST BE ADJACENT (Sinon exception !!!)
+    */
   def moveToGoToCoord(coord: Coord): Move = {
     val lamdaLig = coord.lig - lig
     val lambdaCol = coord.col - col
@@ -49,7 +49,7 @@ case class Coord(lig: Int, col: Int) {
   override def equals(obj: Any): Boolean = {
     obj match {
       case c: Coord => c.hashCode() == this.hashCode()
-      case _ => false
+      case _        => false
     }
   }
 
@@ -84,13 +84,14 @@ case object RIGHT extends Direction {
 }
 
 /**
- * Represent a Move
- * @param initialCoord Initial coord
- * @param direction direction of the move
- */
+  * Represent a Move
+  * @param initialCoord Initial coord
+  * @param direction direction of the move
+  */
 case class Move(initialCoord: Coord, direction: Direction) {
   lazy val arrivalCoord: Coord = this.initialCoord.getCoordAfterMove(direction)
-  lazy val getOppositeMoveCoord: Coord = this.initialCoord.getCoordAfterMove(direction.getOpposite)
+  lazy val getOppositeMoveCoord: Coord =
+    this.initialCoord.getCoordAfterMove(direction.getOpposite)
 
   override def toString: String = s"${initialCoord.toString}  $direction"
 }

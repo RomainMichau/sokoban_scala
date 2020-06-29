@@ -3,15 +3,19 @@ package com.rmichau.soko.Maze
 import com.rmichau.soko.Maze.SquareType.SquareType
 
 class Field(
-  private val field: Map[Coord, Square],
-  val boxesOpt: Option[Set[Coord]] = None,
-  val goalsOpt: Option[Set[Coord]] = None) {
-  val boxes: Set[Coord] = boxesOpt.getOrElse(field.filter(v => v._2.isABox).keySet)
-  val goals: Set[Coord] = goalsOpt.getOrElse(field.filter(v => v._2.isAGoal).keySet)
+    private val field: Map[Coord, Square],
+    val boxesOpt: Option[Set[Coord]] = None,
+    val goalsOpt: Option[Set[Coord]] = None
+) {
+  val boxes: Set[Coord] =
+    boxesOpt.getOrElse(field.filter(v => v._2.isABox).keySet)
+  val goals: Set[Coord] =
+    goalsOpt.getOrElse(field.filter(v => v._2.isAGoal).keySet)
 
   def getBoxes: Set[Coord] = boxes
   def apply(coord: Coord): Square = field(coord)
-  def +(square: Square): Field = new Field(field + (square.coord -> square), Some(boxes), Some(goals))
+  def +(square: Square): Field =
+    new Field(field + (square.coord -> square), Some(boxes), Some(goals))
   def toSet: Set[(Coord, Square)] = field.toSet
   def toMap: Map[Coord, Square] = field
 
@@ -22,7 +26,10 @@ class Field(
 
   def getAllSquares: Iterable[Square] = field.values
 
-  private def moveBox(coord: Coord, direction: Direction): (Map[Coord, Square], Set[Coord]) = {
+  private def moveBox(
+      coord: Coord,
+      direction: Direction
+  ): (Map[Coord, Square], Set[Coord]) = {
     val boxSq = field(coord)
     if (!boxSq.isABox) {
       throw new Exception(s"no box on ${coord.toString}")
@@ -51,10 +58,10 @@ class Field(
     def getColor(square: Square): String = {
       square.sqType match {
         case SquareType.Box | SquareType.BoxPlaced => Console.BLUE
-        case SquareType.Wall => Console.MAGENTA
-        case SquareType.Goal => Console.GREEN
-        case SquareType.Deadlock => Console.RED
-        case SquareType.Ground => Console.WHITE
+        case SquareType.Wall                       => Console.MAGENTA
+        case SquareType.Goal                       => Console.GREEN
+        case SquareType.Deadlock                   => Console.RED
+        case SquareType.Ground                     => Console.WHITE
       }
     }
 
@@ -111,14 +118,14 @@ case class Square(sqType: SquareType, coord: Coord) {
   lazy val sym: Int = sqType.id
   lazy val isWalkable: Boolean = sqType match {
     case SquareType.Ground | SquareType.Deadlock | SquareType.Goal => true
-    case _ => false
+    case _                                                         => false
   }
   lazy val isABox: Boolean = sqType match {
     case SquareType.Box | SquareType.BoxPlaced => true
-    case _ => false
+    case _                                     => false
   }
   lazy val isAGoal: Boolean = sqType match {
     case SquareType.Goal | SquareType.BoxPlaced => true
-    case _ => false
+    case _                                      => false
   }
 }

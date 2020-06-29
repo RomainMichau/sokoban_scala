@@ -2,7 +2,7 @@ package com.rmichau.soko.Maze
 
 import java.net.URI
 
-import com.rmichau.soko.Solver.{ Deadlocks, SolverHelper }
+import com.rmichau.soko.Solver.{Deadlocks, SolverHelper}
 
 import scala.io.Source
 
@@ -85,7 +85,11 @@ class Maze(filePath: URI) {
 
   private def detectStaticDeadlocks(): Unit = {
     println("=====DETECTING STATIC DEADLOCKS======")
-    Deadlocks.detectStaticDeadLocks(field).foreach(sq => currentGameState.field = (field + Square.deadSquare(sq.coord)))
+    Deadlocks
+      .detectStaticDeadLocks(field)
+      .foreach(sq =>
+        currentGameState.field = (field + Square.deadSquare(sq.coord))
+      )
     println("=====DETECTING STATIC DEADLOCKS DONE======")
 
   }
@@ -101,7 +105,10 @@ class Maze(filePath: URI) {
     }
   }
 
-  private def canPushBox(boxCoord: Coord, direction: Direction): Option[Coord] = {
+  private def canPushBox(
+      boxCoord: Coord,
+      direction: Direction
+  ): Option[Coord] = {
     val dest = boxCoord.getCoordAfterMove(direction)
     val destsq = field(dest)
     val sq = field(boxCoord)
@@ -118,7 +125,8 @@ class Maze(filePath: URI) {
       try {
         Source.fromFile(filePath)
       } catch {
-        case e: Exception => throw new Exception(s"lvl '${filePath.toString}' does not exist: $e")
+        case e: Exception =>
+          throw new Exception(s"lvl '${filePath.toString}' does not exist: $e")
       }
 
     val fileLines = source.getLines().toList
@@ -136,13 +144,17 @@ class Maze(filePath: URI) {
             } else {
               Square(SquareType(sq.asDigit), Coord(idxli, idxCol))
             }
-        } ++ (li.length until Maze.nbCol).map(col => Square.wall(Coord(idxli, col)))
+        } ++ (li.length until Maze.nbCol).map(col =>
+          Square.wall(Coord(idxli, col))
+        )
     }.toArray
 
     val fieldMap: Map[Coord, Square] =
       fieldArray.zipWithIndex.flatMap {
         case (li, idxli) =>
-          li.zipWithIndex.map { case (sq, idxCol) => Coord(idxli, idxCol) -> sq }
+          li.zipWithIndex.map {
+            case (sq, idxCol) => Coord(idxli, idxCol) -> sq
+          }
       }.toMap
 
     GameState(new Field(fieldMap), pos)
@@ -156,4 +168,3 @@ class Maze(filePath: URI) {
 case class GameState(var field: Field, var playerPos: Coord) {
   def posBoxes: Set[Coord] = field.getBoxes
 }
-

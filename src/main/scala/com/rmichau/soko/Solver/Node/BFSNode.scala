@@ -7,7 +7,7 @@ trait BFSNode[U <: BFSNode[U]] {
   def getPathToNode: Vector[U] = {
     parentNode match {
       case Some(parentNode) => parentNode.getPathToNode :+ parentNode
-      case None => Vector()
+      case None             => Vector()
     }
   }
   // Draw node on console (use to debug)

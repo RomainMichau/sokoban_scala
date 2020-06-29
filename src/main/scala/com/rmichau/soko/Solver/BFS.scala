@@ -1,33 +1,40 @@
 package com.rmichau.soko.Solver
 
-import java.io.{ File, PrintWriter }
+import java.io.{File, PrintWriter}
 import java.util.Calendar
 
 import com.rmichau.soko.Solver.Node.BFSNode
 import com.rmichau.soko.util.Util
 
-import scala.collection.{ immutable, mutable }
+import scala.collection.{immutable, mutable}
 
 object BFS {
 
-  case class BFSResult[U <: BFSNode[U]](finalNode: Option[U], visitedNode: Set[U], timeToFindRes: Long, nodeToFindRes: Int) {
-    override def toString: String = s"visited Nodes: $visitedNode; time: $timeToFindRes ms"
+  case class BFSResult[U <: BFSNode[U]](
+      finalNode: Option[U],
+      visitedNode: Set[U],
+      timeToFindRes: Long,
+      nodeToFindRes: Int
+  ) {
+    override def toString: String =
+      s"visited Nodes: $visitedNode; time: $timeToFindRes ms"
   }
 
   /**
-   * Do a bfs to fin a BFSNode marked as goal from the node sent in parameters
-   *
-   * @param node Begining node of the BFS
-   * @return return the Fist node marked as a bfs goal. Path to this node can be get with node.getPathToNode
-   *         If no goalNode is reachable None in returned
-   */
+    * Do a bfs to fin a BFSNode marked as goal from the node sent in parameters
+    *
+    * @param node Begining node of the BFS
+    * @return return the Fist node marked as a bfs goal. Path to this node can be get with node.getPathToNode
+    *         If no goalNode is reachable None in returned
+    */
   def doBFS[U <: BFSNode[U]](
-    node: U,
-    queue: BfsQueue[U],
-    isGoalNode: U => Boolean,
-    disp: Boolean = false,
-    debug: Boolean = false,
-    bfsDecription: String = ""): BFSResult[U] = {
+      node: U,
+      queue: BfsQueue[U],
+      isGoalNode: U => Boolean,
+      disp: Boolean = false,
+      debug: Boolean = false,
+      bfsDecription: String = ""
+  ): BFSResult[U] = {
     if (queue.nonEmpty) {
       throw new Exception("queue must be empty")
     }
@@ -86,7 +93,11 @@ object BFS {
     }
 
     val writer = new PrintWriter(new File("previous_res"))
-    writer.write(Calendar.getInstance().getTime + "\n" + resTxt + "\n=============== \n" + line.getOrElse(""))
+    writer.write(
+      Calendar
+        .getInstance()
+        .getTime + "\n" + resTxt + "\n=============== \n" + line.getOrElse("")
+    )
     writer.close()
   }
 }
@@ -111,4 +122,3 @@ class BfsPriorityQueue[U](ord: Ordering[U]) extends BfsQueue[U] {
   override def nonEmpty: Boolean = queue.nonEmpty
 
 }
-

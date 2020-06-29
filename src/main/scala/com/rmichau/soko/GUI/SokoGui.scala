@@ -1,23 +1,23 @@
 package com.rmichau.soko.GUI
 
-import com.rmichau.soko.GUI.LevelPicker.{ dialogStage, res }
+import com.rmichau.soko.GUI.LevelPicker.{dialogStage, res}
 import com.rmichau.soko.Maze.SquareType.SquareType
 import com.rmichau.soko.Maze._
 import com.rmichau.soko.Solver.BFS.BFSResult
-import com.rmichau.soko.Solver.{ BFS, MazeSolver }
+import com.rmichau.soko.Solver.{BFS, MazeSolver}
 import com.rmichau.soko.Solver.Node.PushBoxNode
-import javafx.animation.{ KeyFrame, Timeline }
+import javafx.animation.{KeyFrame, Timeline}
 import javafx.beans.property.SimpleObjectProperty
-import javafx.event.{ ActionEvent, EventHandler }
+import javafx.event.{ActionEvent, EventHandler}
 import javafx.scene.control.Tooltip
 import javafx.util.Duration
 import scalafx.Includes._
 import scalafx.animation.PauseTransition
 import scalafx.beans.property.ObjectProperty
-import scalafx.scene.{ Node, Scene }
-import scalafx.scene.control.{ Button, Label, ProgressIndicator }
-import scalafx.scene.image.{ Image, ImageView }
-import scalafx.scene.input.{ KeyCode, KeyEvent }
+import scalafx.scene.{Node, Scene}
+import scalafx.scene.control.{Button, Label, ProgressIndicator}
+import scalafx.scene.image.{Image, ImageView}
+import scalafx.scene.input.{KeyCode, KeyEvent}
 import scalafx.scene.layout.GridPane
 import scalafx.scene.paint.Color
 import scala.collection.immutable.HashMap
@@ -44,7 +44,9 @@ class SokoGui(var maze: Maze) {
     }
     mp
   }
-  private val marioImg = getImageFromPath(getClass.getResource("/img/mario.jpg").toString)
+  private val marioImg = getImageFromPath(
+    getClass.getResource("/img/mario.jpg").toString
+  )
 
   var grid: GridPane = loadMaze()
 
@@ -74,11 +76,10 @@ class SokoGui(var maze: Maze) {
     RightSideCommand.ongoingGamePlay.setValue("BFS")
     RightSideCommand.ongoingGamePlay.setTextFill(Color.Red)
     val pause = new PauseTransition(Duration.millis(4)) {
-      this.onFinished = {
-        (_: ActionEvent) =>
-          manageBfsResult(mazeSolver.solveMaze())
-          RightSideCommand.ongoingGamePlay.setValue("Manual")
-          RightSideCommand.ongoingGamePlay.setTextFill(Color.Black)
+      this.onFinished = { (_: ActionEvent) =>
+        manageBfsResult(mazeSolver.solveMaze())
+        RightSideCommand.ongoingGamePlay.setValue("Manual")
+        RightSideCommand.ongoingGamePlay.setTextFill(Color.Black)
       }
     }
     pause.play()
@@ -111,14 +112,19 @@ class SokoGui(var maze: Maze) {
   }
 
   private def drawMove(dirs: Vector[Direction]): Unit = {
-    val timeline = new Timeline(new KeyFrame(Duration.millis(TIME_BETWEEN_FRAME_MS), new EventHandler[ActionEvent]() {
-      var i = 0
-      override def handle(t: ActionEvent): Unit = {
-        movePlayer(dirs(i))
-        refreshGrid()
-        i = i + 1
-      }
-    }))
+    val timeline = new Timeline(
+      new KeyFrame(
+        Duration.millis(TIME_BETWEEN_FRAME_MS),
+        new EventHandler[ActionEvent]() {
+          var i = 0
+          override def handle(t: ActionEvent): Unit = {
+            movePlayer(dirs(i))
+            refreshGrid()
+            i = i + 1
+          }
+        }
+      )
+    )
     timeline.setCycleCount(dirs.size)
     timeline.play()
   }
@@ -162,7 +168,11 @@ class SokoGui(var maze: Maze) {
     new Image(url, IMAGE_WIDTH, IMAGE_HEIGHT, false, false)
   }
 
-  private def getImgView(square: Square, coord: Coord, isPlayer: Boolean = false): ImageView = {
+  private def getImgView(
+      square: Square,
+      coord: Coord,
+      isPlayer: Boolean = false
+  ): ImageView = {
     val img = if (!isPlayer) {
       new ImageView(fieldImages(square.sqType))
     } else {
@@ -179,23 +189,36 @@ class SokoGui(var maze: Maze) {
 
   trait GridMember extends Node { val row: Int }
 
-  class DescriptorLabel(descriptor: String, val row: Int, private var value: String = "", suffix: String = "") extends Label {
+  class DescriptorLabel(
+      descriptor: String,
+      val row: Int,
+      private var value: String = "",
+      suffix: String = ""
+  ) extends Label {
     this.text = s"$descriptor: $value $suffix"
-    def setValue(newValue: String): Unit = this.setText(s"$descriptor: $newValue $suffix")
+    def setValue(newValue: String): Unit =
+      this.setText(s"$descriptor: $newValue $suffix")
   }
 
   class LevelCommandButton(val row: Int) extends Button with GridMember {
     this.focusTraversable = false
   }
-  class ProgressIndicatorNode(val row: Int) extends ProgressIndicator with GridMember
+  class ProgressIndicatorNode(val row: Int)
+      extends ProgressIndicator
+      with GridMember
 
   object RightSideCommand {
-    val levelName: DescriptorLabel = new DescriptorLabel("levelName", 0, maze.levelName)
-    val ongoingGamePlay: DescriptorLabel = new DescriptorLabel("Gameplay type", 1, "manual")
-    val timeTofindRes: DescriptorLabel = new DescriptorLabel("BFS Time", 2, suffix = "ms")
-    val nodeToFindRes: DescriptorLabel = new DescriptorLabel("Nb nodes visited", 3)
+    val levelName: DescriptorLabel =
+      new DescriptorLabel("levelName", 0, maze.levelName)
+    val ongoingGamePlay: DescriptorLabel =
+      new DescriptorLabel("Gameplay type", 1, "manual")
+    val timeTofindRes: DescriptorLabel =
+      new DescriptorLabel("BFS Time", 2, suffix = "ms")
+    val nodeToFindRes: DescriptorLabel =
+      new DescriptorLabel("Nb nodes visited", 3)
     val resLenght: DescriptorLabel = new DescriptorLabel("Res length", 4)
-    def values: Set[DescriptorLabel] = Set(levelName, ongoingGamePlay, timeTofindRes, resLenght, nodeToFindRes)
+    def values: Set[DescriptorLabel] =
+      Set(levelName, ongoingGamePlay, timeTofindRes, resLenght, nodeToFindRes)
   }
 
   object leftSideCommand {

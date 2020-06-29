@@ -1,2 +1,2 @@
 addSbtPlugin ("com.eed3si9n"% "sbt-assembly"% "0.14.10")
-addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.3")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.0") // "2.4.0" is just sbt plugin version
