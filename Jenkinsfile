@@ -19,7 +19,7 @@ pipeline {
             steps {
             ansiColor('xterm') {
                 echo "Testing..."
-                sh "/usr/local/bin/sbt scalastyle"
+                sh "/usr/local/bin/sbt scalafmtCheck"
             }}
         }
 
