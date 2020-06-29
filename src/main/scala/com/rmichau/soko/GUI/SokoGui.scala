@@ -21,6 +21,7 @@ import scalafx.scene.input.{KeyCode, KeyEvent}
 import scalafx.scene.layout.GridPane
 import scalafx.scene.paint.Color
 import scala.collection.immutable.HashMap
+import scala.concurrent.Await
 
 class SokoGui(var maze: Maze) {
 
