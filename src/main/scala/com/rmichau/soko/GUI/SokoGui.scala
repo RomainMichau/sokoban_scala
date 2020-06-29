@@ -21,7 +21,6 @@ import scalafx.scene.layout.GridPane
 import scalafx.scene.paint.Color
 import scalafx.stage.Modality
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.collection.immutable.HashMap
 
 class SokoGui(var maze: Maze) {
