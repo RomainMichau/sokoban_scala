@@ -52,10 +52,11 @@ case class PushBoxNode private(state: PushBoxNodeState,
     var alreadyTestCoord: Set[Coord] = Set()
     def isBoxBlocked(box: Coord): Boolean = {
       alreadyTestCoord += box
-      val boxDirectlyPushable = Direction.leftAndUp.exists { dir =>
+      val boxDirectlyPushable = Direction.values.exists { dir =>
         val frontCoord = box.getCoordAfterMove(dir)
         val behindCoord = box.getCoordAfterMove(dir.getOpposite)
-        frontCoord.isInField && behindCoord.isInField && field(frontCoord).isWalkable && field(behindCoord).isWalkable
+        frontCoord.isInField && behindCoord.isInField &&
+          state.accessibleZone.accessibleCoord(behindCoord) && field(frontCoord).isWalkable && field(behindCoord).isWalkable
       }
       val adjacentBoxIsPushable = box.adjacentSq.filter{ adjCoord =>
         adjCoord.isInField &&
@@ -66,10 +67,10 @@ case class PushBoxNode private(state: PushBoxNodeState,
     }
 
     val res = field(newBox).sqType != SquareType.BoxPlaced && isBoxBlocked(newBox)
-    if(res) {
+   /* if(res) {
       field.drawField()
       print(res)
-    }
+    }*/
     res
   }
 

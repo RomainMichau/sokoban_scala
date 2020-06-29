@@ -23,7 +23,12 @@ object BFS {
    * @return return the Fist node marked as a bfs goal. Path to this node can be get with node.getPathToNode
    *         If no goalNode is reachable None in returned
    */
-  def doBFS[U <: BFSNode[U]](node: U, queue: BfsQueue[U], isGoalNode: U => Boolean, disp: Boolean = false, debug: Boolean = false): BFSResult[U] = {
+  def doBFS[U <: BFSNode[U]](node: U,
+                             queue: BfsQueue[U],
+                             isGoalNode: U => Boolean,
+                             disp: Boolean = false,
+                             debug: Boolean = false,
+                             bfsDecription: String = ""): BFSResult[U] = {
     if (queue.nonEmpty) {
       throw new Exception("queue must be empty")
     }
@@ -56,13 +61,13 @@ object BFS {
         }
       }
     }
-    val resTxt = s"solution found $won \n" +
+    val resTxt = s"level: $bfsDecription" +
+      s"solution found $won \n" +
       "BFS Elapsed time: " + (chrono.currentTime) + "ms\n" +
       s"Nove visited: ${visitedNode.size}"
     if (disp) {
       print(resTxt)
     }
-
     if (disp) {
       writeInFile(resTxt)
     }
@@ -73,7 +78,10 @@ object BFS {
   private def writeInFile(resTxt: String): Unit = {
     val file = new File("previous_res")
     val line = if (file.exists()) {
-      Some(scala.io.Source.fromFile(file).mkString)
+      val source = scala.io.Source.fromFile(file)
+      val value = source.mkString
+      source.close()
+      Some(value)
     }
     else {
       None

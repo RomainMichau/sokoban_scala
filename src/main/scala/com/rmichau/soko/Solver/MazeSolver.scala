@@ -18,7 +18,8 @@ class MazeSolver(private var maze: Maze) {
     val field = node.field
     val boxPlaced = field.getBoxes.intersect(field.goals)
     val dist = node.field.getBoxes.map(box => distMap(box)).sum
-    -dist + boxPlaced.size * 20
+    val currentBoxDist = node.incomingEdge.map(edge => distMap(edge.incommingMove.arrivalCoord)).getOrElse(0)
+    -dist -currentBoxDist  + boxPlaced.size * 20
   }
 
   def solveMaze():BFS.BFSResult[PushBoxNode] ={
@@ -27,7 +28,7 @@ class MazeSolver(private var maze: Maze) {
     BFS.doBFS(node,
       new BfsPriorityQueue[PushBoxNode](Ordering.by(diff)),
       (node: PushBoxNode) => node.field.getBoxes == node.field.goals,
-      disp = true, debug = false)
+      disp = true, debug = false, bfsDecription = maze.levelName)
   }
 
 

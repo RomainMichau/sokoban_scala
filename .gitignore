@@ -33,3 +33,4 @@ build
 *.class
 target
 previous_res
+*.trc
