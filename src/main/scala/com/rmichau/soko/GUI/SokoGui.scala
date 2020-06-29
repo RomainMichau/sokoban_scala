@@ -24,7 +24,6 @@ import scalafx.stage.Modality
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.collection.immutable.HashMap
-import scala.concurrent.Await
 
 class SokoGui(var maze: Maze) {
 
