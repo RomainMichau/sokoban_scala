@@ -3,7 +3,7 @@ package com.rmichau.soko.GUI
 import com.rmichau.soko.Maze.SquareType.SquareType
 import com.rmichau.soko.Maze._
 import com.rmichau.soko.Solver.BFS.BFSResult
-import com.rmichau.soko.Solver.{BFS, MazeSolver}
+import com.rmichau.soko.Solver.{MazeSolver}
 import com.rmichau.soko.Solver.Node.PushBoxNode
 import javafx.animation.{KeyFrame, Timeline}
 import javafx.beans.property.SimpleObjectProperty
