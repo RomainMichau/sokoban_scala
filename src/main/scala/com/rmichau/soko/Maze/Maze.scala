@@ -2,10 +2,9 @@ package com.rmichau.soko.Maze
 
 import java.net.URI
 
-import com.rmichau.soko.Solver.{Deadlocks, SolverHelper}
+import com.rmichau.soko.Solver.{ Deadlocks, SolverHelper }
 
 import scala.io.Source
-
 
 object Maze {
   private var nbLig = 0
@@ -47,8 +46,7 @@ class Maze(filePath: URI) {
         this.currentGameState.playerPos = dest
         //this.drawField()
         hasWon
-      }
-      else if (destSq.isABox) {
+      } else if (destSq.isABox) {
         if (this.pushBox(dest, direction)) {
           this.currentGameState.playerPos = dest
           //this.drawField()
@@ -70,30 +68,30 @@ class Maze(filePath: URI) {
   }
 
   override def toString: String = {
-    var res =""
+    var res = ""
     for (lig <- 0 until this.nbLig) {
       for (col <- 0 until this.nbCol) {
         val sq = this.field(Coord(lig, col))
         if (Coord(lig, col) != posPlayer) {
-          res+=sq.sym
+          res += sq.sym
         } else {
-          res+=5
+          res += 5
         }
       }
-      res+="\n"
+      res += "\n"
     }
     res
   }
 
   private def detectStaticDeadlocks(): Unit = {
     println("=====DETECTING STATIC DEADLOCKS======")
-    Deadlocks.detectStaticDeadLocks(field).foreach(sq => currentGameState.field = (field + Square.deadSquare(sq.coord)) )
+    Deadlocks.detectStaticDeadLocks(field).foreach(sq => currentGameState.field = (field + Square.deadSquare(sq.coord)))
     println("=====DETECTING STATIC DEADLOCKS DONE======")
 
   }
 
   private def hasWon = {
-     this.goals == this.boxes
+    this.goals == this.boxes
   }
 
   private def pushBox(boxCoord: Coord, direction: Direction): Boolean = {
@@ -117,7 +115,7 @@ class Maze(filePath: URI) {
   private def loadLevelFromFile(filePath: URI): GameState = {
     println(s"loading level from file $filePath")
     val source =
-      try{
+      try {
         Source.fromFile(filePath)
       } catch {
         case e: Exception => throw new Exception(s"lvl '${filePath.toString}' does not exist: $e")
@@ -128,22 +126,24 @@ class Maze(filePath: URI) {
     Maze.nbCol = fileLines.map(_.length).max
     Maze.nbLig = fileLines.length
     var pos = Coord(0, 0)
-    val fieldArray: Array[Array[Square]] = fileLines.zipWithIndex.map { case (li, idxli) =>
-      li.toCharArray.zipWithIndex.map { case (sq, idxCol) =>
-        if (sq.asDigit == 5) {
-          pos = Coord(idxli, idxCol)
-          Square(SquareType.Ground, pos)
-        }
-        else {
-          Square(SquareType(sq.asDigit), Coord(idxli, idxCol))
-        }
-      } ++ (li.length until Maze.nbCol ).map(col => Square.wall(Coord(idxli, col)))
+    val fieldArray: Array[Array[Square]] = fileLines.zipWithIndex.map {
+      case (li, idxli) =>
+        li.toCharArray.zipWithIndex.map {
+          case (sq, idxCol) =>
+            if (sq.asDigit == 5) {
+              pos = Coord(idxli, idxCol)
+              Square(SquareType.Ground, pos)
+            } else {
+              Square(SquareType(sq.asDigit), Coord(idxli, idxCol))
+            }
+        } ++ (li.length until Maze.nbCol).map(col => Square.wall(Coord(idxli, col)))
     }.toArray
 
     val fieldMap: Map[Coord, Square] =
-    fieldArray.zipWithIndex.flatMap{ case (li, idxli) =>
-      li.zipWithIndex.map { case (sq, idxCol) => Coord(idxli, idxCol) -> sq }
-    }.toMap
+      fieldArray.zipWithIndex.flatMap {
+        case (li, idxli) =>
+          li.zipWithIndex.map { case (sq, idxCol) => Coord(idxli, idxCol) -> sq }
+      }.toMap
 
     GameState(new Field(fieldMap), pos)
   }
@@ -153,12 +153,7 @@ class Maze(filePath: URI) {
   }
 }
 
-case class GameState(var field: Field, var playerPos: Coord){
+case class GameState(var field: Field, var playerPos: Coord) {
   def posBoxes: Set[Coord] = field.getBoxes
 }
-
-
-
-
-
 

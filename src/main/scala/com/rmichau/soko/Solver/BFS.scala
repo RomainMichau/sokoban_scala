@@ -1,14 +1,12 @@
 package com.rmichau.soko.Solver
 
-
-import java.io.{File, PrintWriter}
+import java.io.{ File, PrintWriter }
 import java.util.Calendar
 
 import com.rmichau.soko.Solver.Node.BFSNode
 import com.rmichau.soko.util.Util
 
-import scala.collection.{immutable, mutable}
-
+import scala.collection.{ immutable, mutable }
 
 object BFS {
 
@@ -23,12 +21,13 @@ object BFS {
    * @return return the Fist node marked as a bfs goal. Path to this node can be get with node.getPathToNode
    *         If no goalNode is reachable None in returned
    */
-  def doBFS[U <: BFSNode[U]](node: U,
-                             queue: BfsQueue[U],
-                             isGoalNode: U => Boolean,
-                             disp: Boolean = false,
-                             debug: Boolean = false,
-                             bfsDecription: String = ""): BFSResult[U] = {
+  def doBFS[U <: BFSNode[U]](
+    node: U,
+    queue: BfsQueue[U],
+    isGoalNode: U => Boolean,
+    disp: Boolean = false,
+    debug: Boolean = false,
+    bfsDecription: String = ""): BFSResult[U] = {
     if (queue.nonEmpty) {
       throw new Exception("queue must be empty")
     }
@@ -82,8 +81,7 @@ object BFS {
       val value = source.mkString
       source.close()
       Some(value)
-    }
-    else {
+    } else {
       None
     }
 
@@ -92,7 +90,6 @@ object BFS {
     writer.close()
   }
 }
-
 
 trait BfsQueue[U] {
   def enqueue(v: U*): Unit
@@ -104,7 +101,6 @@ trait BfsQueue[U] {
 
 class BfsPlainQueue[U] extends mutable.Queue[U] with BfsQueue[U]
 
-
 class BfsPriorityQueue[U](ord: Ordering[U]) extends BfsQueue[U] {
   val queue: mutable.PriorityQueue[U] = mutable.PriorityQueue[U]()(ord)
 
@@ -115,5 +111,4 @@ class BfsPriorityQueue[U](ord: Ordering[U]) extends BfsQueue[U] {
   override def nonEmpty: Boolean = queue.nonEmpty
 
 }
-
 

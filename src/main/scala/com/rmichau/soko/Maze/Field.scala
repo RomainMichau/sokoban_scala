@@ -2,11 +2,10 @@ package com.rmichau.soko.Maze
 
 import com.rmichau.soko.Maze.SquareType.SquareType
 
-
-
-class Field(private val field: Map[Coord, Square],
-            val boxesOpt: Option[Set[Coord]]= None,
-            val goalsOpt: Option[Set[Coord]]= None){
+class Field(
+  private val field: Map[Coord, Square],
+  val boxesOpt: Option[Set[Coord]] = None,
+  val goalsOpt: Option[Set[Coord]] = None) {
   val boxes: Set[Coord] = boxesOpt.getOrElse(field.filter(v => v._2.isABox).keySet)
   val goals: Set[Coord] = goalsOpt.getOrElse(field.filter(v => v._2.isAGoal).keySet)
 
@@ -23,27 +22,25 @@ class Field(private val field: Map[Coord, Square],
 
   def getAllSquares: Iterable[Square] = field.values
 
-  private def moveBox(coord: Coord, direction: Direction):(Map[Coord, Square], Set[Coord]) = {
+  private def moveBox(coord: Coord, direction: Direction): (Map[Coord, Square], Set[Coord]) = {
     val boxSq = field(coord)
-    if(!boxSq.isABox){
+    if (!boxSq.isABox) {
       throw new Exception(s"no box on ${coord.toString}")
     }
     val destSq = field(coord.getCoordAfterMove(direction))
-    if(destSq.isABox){
+    if (destSq.isABox) {
       throw new Exception(s"already a box on ${destSq.coord.toString}")
     }
 
     val oldSq: Square = if (boxSq.sqType == SquareType.BoxPlaced) {
       Square.goal(boxSq.coord)
-    }
-    else {
+    } else {
       Square.ground(boxSq.coord)
     }
 
     val newSq: Square = if (destSq.sqType == SquareType.Goal) {
       Square.boxPlaced(destSq.coord)
-    }
-    else {
+    } else {
       Square.box(destSq.coord)
     }
     val newBoxes = boxes - (oldSq.coord) + (destSq.coord)

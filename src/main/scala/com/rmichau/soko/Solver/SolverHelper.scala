@@ -1,14 +1,15 @@
 package com.rmichau.soko.Solver
 
 import com.rmichau.soko.Maze._
-import com.rmichau.soko.Solver.Node.{MoveNode, MoveNodeState}
+import com.rmichau.soko.Solver.Node.{ MoveNode, MoveNodeState }
 
 object SolverHelper {
 
   def getDistMap(field: Field): Map[Coord, Int] = {
     val map = field.getAllSquares.filter(_.sqType != SquareType.Wall).map { sq =>
       val node: MoveNode = MoveNode.getMoveNodeAsABoxInAnEmptyField(MoveNodeState(field, sq.coord))
-      (sq.coord -> BFS.doBFS(node,
+      (sq.coord -> BFS.doBFS(
+        node,
         new BfsPlainQueue[MoveNode],
         (n: MoveNode) => n.nodeState.getCurrentSquare.isAGoal)
         .finalNode
@@ -32,7 +33,8 @@ object SolverHelper {
 
   def getPathAsAPlayerCannotPushBox(initCoord: Coord, arrivalCoord: Coord, field: Field): Option[Vector[Move]] = {
     val node: MoveNode = MoveNode.getMoveNodeAsAPlayerWhoCantPushBox(MoveNodeState(field, initCoord))
-    val bfsRes = BFS.doBFS(node,
+    val bfsRes = BFS.doBFS(
+      node,
       new BfsPlainQueue[MoveNode],
       (n: MoveNode) => n.nodeState.getCurrentSquare.coord == arrivalCoord)
     val res = bfsRes.finalNode
@@ -43,7 +45,7 @@ object SolverHelper {
         val vect = t.flatMap(_.incomingEdge.map(_.move))
         if (bfsRes.finalNode.get.incomingEdge.isDefined) {
           vect :+ bfsRes.finalNode.get.incomingEdge.get.move
-        } else {vect}
+        } else { vect }
       }
     res
   }

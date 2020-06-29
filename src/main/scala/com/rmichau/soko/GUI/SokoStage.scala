@@ -9,7 +9,7 @@ import scala.io.Source
 object SokoStage {
   Source.fromResource("movies.txt")
   private val ressourcePath = getClass.getResource("/img/Box.jpg").toString
-  val stage: PrimaryStage = new PrimaryStage(){
+  val stage: PrimaryStage = new PrimaryStage() {
     title = "sokoSolve"
     icons.add(new Image(ressourcePath))
   }

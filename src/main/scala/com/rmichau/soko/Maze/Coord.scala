@@ -2,12 +2,11 @@ package com.rmichau.soko.Maze
 
 import scala.util.hashing.MurmurHash3
 
-
-case class Coord(lig: Int, col: Int){
+case class Coord(lig: Int, col: Int) {
 
   def getCoordAfterMove(direction: Direction): Coord = {
     direction match {
-      case UP => Coord(this.lig-1, this.col)
+      case UP => Coord(this.lig - 1, this.col)
       case DOWN => Coord(this.lig + 1, this.col)
       case RIGHT => Coord(this.lig, this.col + 1)
       case LEFT => Coord(this.lig, this.col - 1)
@@ -21,8 +20,8 @@ case class Coord(lig: Int, col: Int){
   def moveToGoToCoord(coord: Coord): Move = {
     val lamdaLig = coord.lig - lig
     val lambdaCol = coord.col - col
-    val dir = if(lamdaLig == 1) {
-       DOWN
+    val dir = if (lamdaLig == 1) {
+      DOWN
     } else if (lamdaLig == -1) {
       UP
     } else if (lambdaCol == -1) {
@@ -45,23 +44,23 @@ case class Coord(lig: Int, col: Int){
 
   override def toString: String = s"$lig;$col"
 
-  override def hashCode(): Int =     MurmurHash3.listHash(List(lig, col), 2)
+  override def hashCode(): Int = MurmurHash3.listHash(List(lig, col), 2)
 
   override def equals(obj: Any): Boolean = {
     obj match {
-      case c:Coord => c.hashCode() == this.hashCode()
+      case c: Coord => c.hashCode() == this.hashCode()
       case _ => false
     }
   }
 
 }
 
-object Direction{
+object Direction {
   def values: Set[Direction] = Set(UP, DOWN, LEFT, RIGHT)
   def leftAndUp: Set[Direction] = Set(UP, LEFT)
 }
 
-sealed trait Direction{
+sealed trait Direction {
   def getOpposite: Direction
   def getAdj: (Direction, Direction)
 }
@@ -89,7 +88,7 @@ case object RIGHT extends Direction {
  * @param initialCoord Initial coord
  * @param direction direction of the move
  */
-case class Move(initialCoord: Coord, direction: Direction){
+case class Move(initialCoord: Coord, direction: Direction) {
   lazy val arrivalCoord: Coord = this.initialCoord.getCoordAfterMove(direction)
   lazy val getOppositeMoveCoord: Coord = this.initialCoord.getCoordAfterMove(direction.getOpposite)
 
