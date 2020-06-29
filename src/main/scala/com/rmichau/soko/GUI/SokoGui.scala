@@ -1,6 +1,5 @@
 package com.rmichau.soko.GUI
 
-import com.rmichau.soko.GUI.LevelPicker.{dialogStage, res}
 import com.rmichau.soko.Maze.SquareType.SquareType
 import com.rmichau.soko.Maze._
 import com.rmichau.soko.Solver.BFS.BFSResult
