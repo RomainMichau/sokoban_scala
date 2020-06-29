@@ -1,6 +1,5 @@
 package com.rmichau.soko.GUI
 
-import com.rmichau.soko.GUI.LevelPicker.{dialogStage, res}
 import com.rmichau.soko.Maze.SquareType.SquareType
 import com.rmichau.soko.Maze._
 import com.rmichau.soko.Solver.BFS.BFSResult
@@ -20,6 +19,10 @@ import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.input.{KeyCode, KeyEvent}
 import scalafx.scene.layout.GridPane
 import scalafx.scene.paint.Color
+import scalafx.stage.Modality
+
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.collection.immutable.HashMap
 
 class SokoGui(var maze: Maze) {
