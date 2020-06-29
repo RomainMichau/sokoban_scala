@@ -19,7 +19,6 @@ import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.input.{KeyCode, KeyEvent}
 import scalafx.scene.layout.GridPane
 import scalafx.scene.paint.Color
-import scalafx.stage.Modality
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.collection.immutable.HashMap
