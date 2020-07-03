@@ -6,6 +6,7 @@ import com.rmichau.soko.Maze.{
   Field,
   GameState,
   Move,
+
   SquareType
 }
 import com.rmichau.soko.Solver.{AccessibleZone, SolverHelper}

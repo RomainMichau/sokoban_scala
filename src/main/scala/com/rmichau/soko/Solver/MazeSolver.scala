@@ -24,7 +24,7 @@ class MazeSolver(private var maze: Maze) {
     -dist - currentBoxDist + boxPlaced.size * 20
   }
 
-  def solveMaze(): BFS.BFSResult[PushBoxNode] = {
+  def solveMaze(): BFS.BFSResult[ PushBoxNode] = {
     println(s"solving maze ${maze.levelName}")
     val node: PushBoxNode = PushBoxNode(
       PushBoxNodeState(maze.field, AccessibleZone(maze.field, maze.posPlayer)),
@@ -35,7 +35,6 @@ class MazeSolver(private var maze: Maze) {
       new BfsPriorityQueue[PushBoxNode](Ordering.by(diff)),
       (node: PushBoxNode) => node.field.getBoxes == node.field.goals,
       disp = true,
-      debug = false,
       bfsDecription = maze.levelName
     )
   }
