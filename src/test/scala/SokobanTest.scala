@@ -11,7 +11,6 @@ import scala.util.hashing.MurmurHash3
 
 class SokobanTest extends FunSuite {
  val levels: Array[File] = Util.recursiveListFiles(new File("test/levels")).filter(_.isFile)
-// MurmurHash3.setHash(
  test("level file reader"){
   assert(levels.toSet.toString() == "Set(test/levels/easy/easy_1.dat, test/levels/medium/medium_2.dat, test/levels/test/test_4.dat, test/levels/test/test_1.dat, test/levels/easy/easy_2.dat, test/levels/medium/medium_1.dat, " +
     "test/levels/medium/medium_3.dat, test/levels/test/test_2.dat)")
