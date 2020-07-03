@@ -35,7 +35,6 @@ class MazeSolver(private var maze: Maze) {
       new BfsPriorityQueue[PushBoxNode](Ordering.by(diff)),
       (node: PushBoxNode) => node.field.getBoxes == node.field.goals,
       disp = true,
-      debug = false,
       bfsDecription = maze.levelName
     )
   }
