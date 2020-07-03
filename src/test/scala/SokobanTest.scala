@@ -18,7 +18,7 @@ class SokobanTest extends FunSuite {
 /*
  test("test maze loading + static deadlock detection"){
   val mazee1 = new Maze(levels.filter(_.toURI.toString.contains("easy_1"))(0).toURI)
-  assert(mazee1.toString=="111111\n194111\n100111\n135091\n100291\n199111\n111111\n111111\n")
+  assert(mazee1.toString=="111111\n194111\n100111\n135091\n100291\n199111\n111111\n111111\n")d
  }
  /**/
  val solvedMazeE1: BFS.BFSResult[PushBoxNode] = mazeSolver.solveMaze()
